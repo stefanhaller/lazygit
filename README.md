@@ -1,3 +1,21 @@
+# About this fork [stk]
+
+This is my private bag of fixes and improvements. Some of these are in-flight
+PRs (mine or other people's) that haven't been accepted upstream yet, but that
+are stable enough to use already. Others are changes that I want to have, but
+that are done in a too hacky way to make a PR out of it (yet).
+
+I am determined to contribute all of these upstream over time (in some way or
+other), but it's going to take some time; meanwhile, building from this fork
+gives you a significantly improved lazygit already.
+
+Note that the master branch will be frequently rewritten as I rebase onto
+upstream's master, or swap out individual commits for an improved version.
+
+---
+
+# Original README follows...
+
 <div align="center">
 <sup>Special thanks to:</sup>
 <br>
