@@ -4,9 +4,9 @@ env:
   GO_VERSION: 1.26.x
 
 on:
-  push:
-    branches:
-      - master
+  # push:
+  #   branches:
+  #     - master
   pull_request:
 
 jobs:
