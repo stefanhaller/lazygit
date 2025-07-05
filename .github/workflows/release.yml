@@ -48,6 +48,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: jesseduffield/lazygit
+          ref: update-release-workflow
           token: ${{ secrets.LAZYGIT_RELEASE_PAT }}
           fetch-depth: 0
 
