@@ -8,7 +8,6 @@ import (
 	"github.com/jesseduffield/lazygit/pkg/commands/models"
 	"github.com/jesseduffield/lazygit/pkg/gocui"
 	"github.com/jesseduffield/lazygit/pkg/gui/context"
-	"github.com/jesseduffield/lazygit/pkg/gui/keybindings"
 	"github.com/jesseduffield/lazygit/pkg/gui/style"
 	"github.com/jesseduffield/lazygit/pkg/gui/types"
 	"github.com/jesseduffield/lazygit/pkg/utils"
@@ -45,7 +44,7 @@ func (self *SubmodulesController) GetKeybindings(opts types.KeybindingsOpts) []*
 			GetDisabledReason: self.require(self.singleItemSelected()),
 			Description:       self.c.Tr.Enter,
 			Tooltip: utils.ResolvePlaceholderString(self.c.Tr.EnterSubmoduleTooltip,
-				map[string]string{"escape": keybindings.Label(opts.Config.Universal.Return)}),
+				map[string]string{"escape": opts.Config.Universal.Return}),
 			DisplayOnScreen: true,
 		},
 		{

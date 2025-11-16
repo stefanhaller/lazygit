@@ -12,10 +12,6 @@ import (
 	"github.com/jesseduffield/lazygit/pkg/gui/types"
 )
 
-func Label(name string) string {
-	return LabelFromKey(GetKey(name))
-}
-
 func LabelFromKey(key types.Key) string {
 	if key == nil {
 		return ""

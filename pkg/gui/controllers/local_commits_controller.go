@@ -10,7 +10,6 @@ import (
 	"github.com/jesseduffield/lazygit/pkg/gui/context"
 	"github.com/jesseduffield/lazygit/pkg/gui/context/traits"
 	"github.com/jesseduffield/lazygit/pkg/gui/controllers/helpers"
-	"github.com/jesseduffield/lazygit/pkg/gui/keybindings"
 	"github.com/jesseduffield/lazygit/pkg/gui/style"
 	"github.com/jesseduffield/lazygit/pkg/gui/types"
 	"github.com/jesseduffield/lazygit/pkg/utils"
@@ -142,7 +141,7 @@ func (self *LocalCommitsController) GetKeybindings(opts types.KeybindingsOpts) [
 			GetDisabledReason: self.require(self.notMidRebase(self.c.Tr.AlreadyRebasing), self.canFindCommitForQuickStart),
 			Description:       self.c.Tr.QuickStartInteractiveRebase,
 			Tooltip: utils.ResolvePlaceholderString(self.c.Tr.QuickStartInteractiveRebaseTooltip, map[string]string{
-				"editKey": keybindings.Label(editCommitKey),
+				"editKey": editCommitKey,
 			}),
 		},
 		{
@@ -162,7 +161,7 @@ func (self *LocalCommitsController) GetKeybindings(opts types.KeybindingsOpts) [
 			Tooltip: utils.ResolvePlaceholderString(
 				self.c.Tr.CreateFixupCommitTooltip,
 				map[string]string{
-					"squashAbove": keybindings.Label(opts.Config.Commits.SquashAboveCommits),
+					"squashAbove": opts.Config.Commits.SquashAboveCommits,
 				},
 			),
 		},
@@ -680,7 +679,7 @@ func (self *LocalCommitsController) findCommitForQuickStartInteractiveRebase() (
 
 	if !ok || index == 0 {
 		errorMsg := utils.ResolvePlaceholderString(self.c.Tr.CannotQuickStartInteractiveRebase, map[string]string{
-			"editKey": keybindings.Label(self.c.UserConfig().Keybinding.Universal.Edit),
+			"editKey": self.c.UserConfig().Keybinding.Universal.Edit,
 		})
 
 		return nil, errors.New(errorMsg)

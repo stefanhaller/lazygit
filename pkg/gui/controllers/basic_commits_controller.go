@@ -7,7 +7,6 @@ import (
 	"github.com/jesseduffield/lazygit/pkg/commands/git_commands"
 	"github.com/jesseduffield/lazygit/pkg/commands/models"
 	"github.com/jesseduffield/lazygit/pkg/gui/context/traits"
-	"github.com/jesseduffield/lazygit/pkg/gui/keybindings"
 	"github.com/jesseduffield/lazygit/pkg/gui/types"
 	"github.com/jesseduffield/lazygit/pkg/utils"
 	"github.com/samber/lo"
@@ -106,8 +105,8 @@ func (self *BasicCommitsController) GetKeybindings(opts types.KeybindingsOpts) [
 			Description:       self.c.Tr.CherryPickCopy,
 			Tooltip: utils.ResolvePlaceholderString(self.c.Tr.CherryPickCopyTooltip,
 				map[string]string{
-					"paste":  keybindings.Label(opts.Config.Commits.PasteCommits),
-					"escape": keybindings.Label(opts.Config.Universal.Return),
+					"paste":  opts.Config.Commits.PasteCommits,
+					"escape": opts.Config.Universal.Return,
 				},
 			),
 			DisplayOnScreen: true,
