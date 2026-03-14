@@ -1,8 +1,10 @@
 package filetree
 
 import (
+	"os"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/jesseduffield/lazygit/pkg/commands/models"
 	"github.com/jesseduffield/lazygit/pkg/common"
@@ -13,22 +15,18 @@ import (
 	"github.com/samber/lo"
 )
 
-type IFileTreeViewModel interface {
-	IFileTree
-	types.IListCursor
-}
-
 // This combines our FileTree struct with a cursor that retains information about
 // which item is selected. It also contains logic for repositioning that cursor
 // after the files are refreshed
 type FileTreeViewModel struct {
+	// Putting this first so that it doesn't conflict with other open branches. Move down before merging.
+	timeOfMostRecentlyChangedFile time.Time
+
 	sync.RWMutex
 	types.IListCursor
 	IFileTree
 	searchHistory *utils.HistoryBuffer[string]
 }
-
-var _ IFileTreeViewModel = &FileTreeViewModel{}
 
 func NewFileTreeViewModel(getFiles func() []*models.File, common *common.Common, showTree bool) *FileTreeViewModel {
 	fileTree := NewFileTree(getFiles, common, showTree)
@@ -125,6 +123,40 @@ func (self *FileTreeViewModel) SetTree() {
 	}
 
 	self.ClampSelection()
+}
+
+func (self *FileTreeViewModel) AutoSelectMostRecentlyChangedFile() bool {
+	didSelectFile := false
+	var newestPath string
+	var newestTime time.Time
+	for _, file := range self.GetAllFiles() {
+		if file.Deleted {
+			continue
+		}
+		if file.Tracked {
+			info, err := os.Stat(file.Path)
+			if err != nil {
+				continue
+			}
+			if info.ModTime().After(newestTime) {
+				newestTime = info.ModTime()
+				newestPath = "./" + file.Path
+			}
+		}
+	}
+	if newestPath != "" {
+		if newestTime != self.timeOfMostRecentlyChangedFile {
+			self.ExpandToPath(newestPath)
+			if index, found := self.GetIndexForPath(newestPath); found {
+				self.SetSelection(index)
+				didSelectFile = true
+			}
+		}
+
+		self.timeOfMostRecentlyChangedFile = newestTime
+	}
+
+	return didSelectFile
 }
 
 // Let's try to find our file again and move the cursor to that.

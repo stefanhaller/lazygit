@@ -630,6 +630,15 @@ func (self *RefreshHelper) refreshStateFiles() error {
 
 	self.c.Model().Files = files
 	fileTreeViewModel.SetTree()
+
+	// Doing this unconditionally for now; may want to add a user config, and/or a runtime toggle
+	if fileTreeViewModel.AutoSelectMostRecentlyChangedFile() {
+		self.c.AfterLayout(func() error {
+			self.c.Views().Files.FocusPoint(0, self.c.Contexts().Files.GetSelectedLineIdx(), true)
+			return nil
+		})
+	}
+
 	fileTreeViewModel.RWMutex.Unlock()
 
 	return nil
