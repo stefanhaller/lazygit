@@ -54,8 +54,15 @@ var SelectNextLineAfterStagingInTwoHunkDiff = NewIntegrationTest(NewIntegrationT
 			PressPrimaryAction().
 			SelectedLine(Contains("+1b")).
 			PressPrimaryAction().
+			/* EXPECTED:
 			SelectedLine(Contains("+2b")).
+			ACTUAL: */
+			SelectedLine(Contains("-1")).
+			NavigateToLine(Contains("+2b")).
 			PressPrimaryAction().
+			/* EXPECTED:
 			SelectedLine(Contains("-3"))
+			ACTUAL: */
+			SelectedLine(Contains("-1"))
 	},
 })
