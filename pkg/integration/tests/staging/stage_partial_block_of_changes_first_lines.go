@@ -50,8 +50,7 @@ var StagePartialBlockOfChangesFirstLines = NewIntegrationTest(NewIntegrationTest
 			PressPrimaryAction().
 			NavigateToLine(Contains("+2b")).
 			PressPrimaryAction().
-			// TODO: we expect +3b to be selected, but it isn't, so navigate to it
-			NavigateToLine(Contains("+3b")).
+			SelectedLines(Contains("+3b")).
 			PressPrimaryAction()
 
 		t.Views().StagingSecondary().
