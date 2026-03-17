@@ -377,6 +377,7 @@ var tests = []*components.IntegrationTest{
 	staging.DiffContextChange,
 	staging.DiscardAllChanges,
 	staging.Search,
+	staging.SelectNextLineAfterStagingIsolatedAddedLine,
 	staging.StageHunks,
 	staging.StageLines,
 	staging.StagePartialBlockOfChangesFirstLines,
