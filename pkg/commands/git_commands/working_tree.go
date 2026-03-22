@@ -185,8 +185,64 @@ type IFileNode interface {
 }
 
 func (self *WorkingTreeCommands) DiscardAllDirChanges(node IFileNode) error {
-	// this could be more efficient but we would need to handle all the edge cases
-	return node.ForEachFile(self.DiscardAllFileChanges)
+	// Collect files into buckets so we can batch git calls where possible.
+	var specialFiles []*models.File // renames, AA, DU — handled individually
+	var filesToReset []string       // need `git reset` first (staged or conflicted)
+	var filesToCheckout []string    // need `git checkout` (after optional reset)
+	var filesToRemove []string      // added files to delete from disk
+
+	_ = node.ForEachFile(func(file *models.File) error {
+		// Renames and certain merge-conflict statuses need per-file logic.
+		if file.IsRename() || file.ShortStatus == "AA" || file.ShortStatus == "DU" {
+			specialFiles = append(specialFiles, file)
+			return nil
+		}
+
+		if file.HasStagedChanges || file.HasMergeConflicts {
+			filesToReset = append(filesToReset, file.Path)
+			// DD and AU are done after the reset; no checkout or remove needed.
+			if file.ShortStatus == "DD" || file.ShortStatus == "AU" {
+				return nil
+			}
+			if file.Added {
+				filesToRemove = append(filesToRemove, file.Path)
+			} else {
+				filesToCheckout = append(filesToCheckout, file.Path)
+			}
+			return nil
+		}
+
+		// No staged changes below this point.
+		if file.ShortStatus == "DD" || file.ShortStatus == "AU" {
+			return nil
+		}
+
+		if file.Added {
+			filesToRemove = append(filesToRemove, file.Path)
+			return nil
+		}
+
+		filesToCheckout = append(filesToCheckout, file.Path)
+		return nil
+	})
+
+	for _, file := range specialFiles {
+		if err := self.DiscardAllFileChanges(file); err != nil {
+			return err
+		}
+	}
+
+	if err := runGitCmdOnPaths("reset", filesToReset, self.cmd); err != nil {
+		return err
+	}
+
+	for _, path := range filesToRemove {
+		if err := self.os.RemoveFile(path); err != nil {
+			return err
+		}
+	}
+
+	return runGitCmdOnPaths("checkout", filesToCheckout, self.cmd)
 }
 
 func (self *WorkingTreeCommands) DiscardUnstagedDirChanges(node IFileNode) error {
@@ -196,8 +252,14 @@ func (self *WorkingTreeCommands) DiscardUnstagedDirChanges(node IFileNode) error
 			return err
 		}
 
-		cmdArgs := NewGitCmd("checkout").Arg("--", node.GetPath()).ToArgv()
-		if err := self.cmd.New(cmdArgs).Run(); err != nil {
+		// Use specific file paths rather than the directory path, so that an
+		// active filter (e.g. from pressing `/`) only discards visible files.
+		// Include staged files: a file that is staged but also has additional
+		// unstaged changes (AM status) needs checkout to discard those changes.
+		trackedPaths := node.GetFilePathsMatching(func(f *models.File) bool {
+			return f.GetIsTracked() || f.GetHasStagedChanges()
+		})
+		if err := runGitCmdOnPaths("checkout", trackedPaths, self.cmd); err != nil {
 			return err
 		}
 	} else {
@@ -215,7 +277,7 @@ func (self *WorkingTreeCommands) DiscardUnstagedDirChanges(node IFileNode) error
 
 func (self *WorkingTreeCommands) RemoveUntrackedDirFiles(node IFileNode) error {
 	untrackedFilePaths := node.GetFilePathsMatching(
-		func(file *models.File) bool { return !file.GetIsTracked() },
+		func(file *models.File) bool { return !file.GetIsTracked() && !file.GetHasStagedChanges() },
 	)
 
 	for _, path := range untrackedFilePaths {

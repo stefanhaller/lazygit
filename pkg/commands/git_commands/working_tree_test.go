@@ -508,7 +508,7 @@ func TestWorkingTreeDiscardAllDirChanges(t *testing.T) {
 
 	scenarios := []scenario{
 		{
-			testName: "multiple tracked files make individual checkout calls",
+			testName: "multiple regular tracked files batched into a single checkout call",
 			node: &testNode{
 				files: []*models.File{
 					{Path: "a.txt", Tracked: true},
@@ -517,12 +517,10 @@ func TestWorkingTreeDiscardAllDirChanges(t *testing.T) {
 				},
 			},
 			runner: oscommands.NewFakeRunner(t).
-				ExpectGitArgs([]string{"checkout", "--", "a.txt"}, "", nil).
-				ExpectGitArgs([]string{"checkout", "--", "b.txt"}, "", nil).
-				ExpectGitArgs([]string{"checkout", "--", "c.txt"}, "", nil),
+				ExpectGitArgs([]string{"checkout", "--", "a.txt", "b.txt", "c.txt"}, "", nil),
 		},
 		{
-			testName: "staged files each make an individual reset then checkout",
+			testName: "staged files batched into a single reset then a single checkout",
 			node: &testNode{
 				files: []*models.File{
 					{Path: "a.txt", Tracked: true, HasStagedChanges: true},
@@ -530,10 +528,8 @@ func TestWorkingTreeDiscardAllDirChanges(t *testing.T) {
 				},
 			},
 			runner: oscommands.NewFakeRunner(t).
-				ExpectGitArgs([]string{"reset", "--", "a.txt"}, "", nil).
-				ExpectGitArgs([]string{"checkout", "--", "a.txt"}, "", nil).
-				ExpectGitArgs([]string{"reset", "--", "b.txt"}, "", nil).
-				ExpectGitArgs([]string{"checkout", "--", "b.txt"}, "", nil),
+				ExpectGitArgs([]string{"reset", "--", "a.txt", "b.txt"}, "", nil).
+				ExpectGitArgs([]string{"checkout", "--", "a.txt", "b.txt"}, "", nil),
 		},
 		{
 			testName: "added files with no staged changes are removed from disk without any git call",
@@ -574,7 +570,7 @@ func TestWorkingTreeDiscardUnstagedDirChanges(t *testing.T) {
 
 	scenarios := []scenario{
 		{
-			testName: "directory node: uses directory path for checkout",
+			testName: "directory node: removes untracked files and checks out tracked files by path, not by directory",
 			node: &testNode{
 				path: "dir",
 				files: []*models.File{
@@ -583,27 +579,28 @@ func TestWorkingTreeDiscardUnstagedDirChanges(t *testing.T) {
 					{Path: "dir/new.txt", Tracked: false},
 				},
 			},
+			// Must checkout the individual files, not "dir" — otherwise a filter would be ignored.
 			runner: oscommands.NewFakeRunner(t).
-				ExpectGitArgs([]string{"checkout", "--", "dir"}, "", nil),
+				ExpectGitArgs([]string{"checkout", "--", "dir/tracked1.txt", "dir/tracked2.txt"}, "", nil),
 			expectedRemovedFiles: []string{"dir/new.txt"},
 		},
 		{
-			testName: "directory node: staged-but-not-committed file (Tracked=false, HasStagedChanges=true) is removed along with untracked files",
+			testName: "directory node: staged-but-not-committed file (Tracked=false, HasStagedChanges=true) is left alone; purely untracked file is removed",
 			node: &testNode{
 				path: "dir",
 				files: []*models.File{
+					// Staged new files: not removed from disk (RemoveUntrackedDirFiles
+					// skips staged files), but checked out in case it also has
+					// unstaged changes on top (AM status).
 					{Path: "dir/staged-new1.txt", Tracked: false, Added: true, HasStagedChanges: true},
 					{Path: "dir/staged-new2.txt", Tracked: false, Added: true, HasStagedChanges: true},
+					// Purely untracked file: removed from disk, not checked out.
 					{Path: "dir/untracked.txt", Tracked: false, Added: true, HasStagedChanges: false},
 				},
 			},
 			runner: oscommands.NewFakeRunner(t).
-				ExpectGitArgs([]string{"checkout", "--", "dir"}, "", nil),
-			// All files are removed because the predicate of GetFilePathsMatching in
-			// RemoveUntrackedDirFiles is just !Tracked. git checkout -- dir then restores the
-			// staged file from the index. This is a bit wasteful, and we'll improve it at the end
-			// of this branch.
-			expectedRemovedFiles: []string{"dir/staged-new1.txt", "dir/staged-new2.txt", "dir/untracked.txt"},
+				ExpectGitArgs([]string{"checkout", "--", "dir/staged-new1.txt", "dir/staged-new2.txt"}, "", nil),
+			expectedRemovedFiles: []string{"dir/untracked.txt"},
 		},
 		{
 			testName: "file node: added and unstaged file is removed from disk",

@@ -56,23 +56,14 @@ var DiscardUnstagedDirChangesWhenFiltering = NewIntegrationTest(NewIntegrationTe
 			}).
 			Press(keys.Universal.Return). // Cancel filtering
 			Lines(
-				/* EXPECTED:
 				Equals("▼ dir").IsSelected(),
 				Equals("  M  file-one"),
 				Equals("  MM file-two"),
 				Equals("  ?? unstaged-file-two"),
-				ACTUAL: */
-				Equals("▼ dir").IsSelected(),
-				Equals("  M  file-one"),
-				Equals("  M  file-two"),
-				Equals("  ?? unstaged-file-two"),
 			)
 
 		t.FileSystem().FileContent("dir/file-one", Equals("original content\nnew content\n"))
-		/* EXPECTED:
 		t.FileSystem().FileContent("dir/file-two", Equals("original content\nnew content\neven newer content\n"))
-		ACTUAL: */
-		t.FileSystem().FileContent("dir/file-two", Equals("original content\nnew content\n"))
 		t.FileSystem().PathNotPresent("dir/unstaged-file-one")
 		t.FileSystem().FileContent("dir/unstaged-file-two", Equals("unstaged file"))
 	},
