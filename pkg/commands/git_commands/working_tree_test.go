@@ -72,11 +72,12 @@ func TestWorkingTreeUnstageFile(t *testing.T) {
 // when the 'what' is what matters
 func TestWorkingTreeDiscardAllFileChanges(t *testing.T) {
 	type scenario struct {
-		testName      string
-		file          *models.File
-		removeFile    func(string) error
-		runner        *oscommands.FakeCmdObjRunner
-		expectedError string
+		testName             string
+		file                 *models.File
+		removedFileErr       error
+		runner               *oscommands.FakeCmdObjRunner
+		expectedError        string
+		expectedRemovedFiles []string
 	}
 
 	scenarios := []scenario{
@@ -86,7 +87,6 @@ func TestWorkingTreeDiscardAllFileChanges(t *testing.T) {
 				Path:             "test",
 				HasStagedChanges: true,
 			},
-			removeFile: func(string) error { return nil },
 			runner: oscommands.NewFakeRunner(t).
 				ExpectGitArgs([]string{"reset", "--", "test"}, "", errors.New("error")),
 			expectedError: "error",
@@ -98,11 +98,10 @@ func TestWorkingTreeDiscardAllFileChanges(t *testing.T) {
 				Tracked: false,
 				Added:   true,
 			},
-			removeFile: func(string) error {
-				return errors.New("an error occurred when removing file")
-			},
-			runner:        oscommands.NewFakeRunner(t),
-			expectedError: "an error occurred when removing file",
+			removedFileErr:       errors.New("an error occurred when removing file"),
+			runner:               oscommands.NewFakeRunner(t),
+			expectedError:        "an error occurred when removing file",
+			expectedRemovedFiles: []string{"test"},
 		},
 		{
 			testName: "An error occurred with checkout",
@@ -111,7 +110,6 @@ func TestWorkingTreeDiscardAllFileChanges(t *testing.T) {
 				Tracked:          true,
 				HasStagedChanges: false,
 			},
-			removeFile: func(string) error { return nil },
 			runner: oscommands.NewFakeRunner(t).
 				ExpectGitArgs([]string{"checkout", "--", "test"}, "", errors.New("error")),
 			expectedError: "error",
@@ -123,10 +121,8 @@ func TestWorkingTreeDiscardAllFileChanges(t *testing.T) {
 				Tracked:          true,
 				HasStagedChanges: false,
 			},
-			removeFile: func(string) error { return nil },
 			runner: oscommands.NewFakeRunner(t).
 				ExpectGitArgs([]string{"checkout", "--", "test"}, "", nil),
-			expectedError: "",
 		},
 		{
 			testName: "Reset and checkout staged changes",
@@ -135,11 +131,9 @@ func TestWorkingTreeDiscardAllFileChanges(t *testing.T) {
 				Tracked:          true,
 				HasStagedChanges: true,
 			},
-			removeFile: func(string) error { return nil },
 			runner: oscommands.NewFakeRunner(t).
 				ExpectGitArgs([]string{"reset", "--", "test"}, "", nil).
 				ExpectGitArgs([]string{"checkout", "--", "test"}, "", nil),
-			expectedError: "",
 		},
 		{
 			testName: "Reset and checkout merge conflicts",
@@ -148,11 +142,9 @@ func TestWorkingTreeDiscardAllFileChanges(t *testing.T) {
 				Tracked:           true,
 				HasMergeConflicts: true,
 			},
-			removeFile: func(string) error { return nil },
 			runner: oscommands.NewFakeRunner(t).
 				ExpectGitArgs([]string{"reset", "--", "test"}, "", nil).
 				ExpectGitArgs([]string{"checkout", "--", "test"}, "", nil),
-			expectedError: "",
 		},
 		{
 			testName: "Reset and remove",
@@ -162,13 +154,9 @@ func TestWorkingTreeDiscardAllFileChanges(t *testing.T) {
 				Added:            true,
 				HasStagedChanges: true,
 			},
-			removeFile: func(filename string) error {
-				assert.Equal(t, "test", filename)
-				return nil
-			},
 			runner: oscommands.NewFakeRunner(t).
 				ExpectGitArgs([]string{"reset", "--", "test"}, "", nil),
-			expectedError: "",
+			expectedRemovedFiles: []string{"test"},
 		},
 		{
 			testName: "Remove only",
@@ -178,18 +166,19 @@ func TestWorkingTreeDiscardAllFileChanges(t *testing.T) {
 				Added:            true,
 				HasStagedChanges: false,
 			},
-			removeFile: func(filename string) error {
-				assert.Equal(t, "test", filename)
-				return nil
-			},
-			runner:        oscommands.NewFakeRunner(t),
-			expectedError: "",
+			runner:               oscommands.NewFakeRunner(t),
+			expectedRemovedFiles: []string{"test"},
 		},
 	}
 
 	for _, s := range scenarios {
 		t.Run(s.testName, func(t *testing.T) {
-			instance := buildWorkingTreeCommands(commonDeps{runner: s.runner, removeFile: s.removeFile})
+			var removedFiles []string
+			removeFile := func(path string) error {
+				removedFiles = append(removedFiles, path)
+				return s.removedFileErr
+			}
+			instance := buildWorkingTreeCommands(commonDeps{runner: s.runner, removeFile: removeFile})
 			err := instance.DiscardAllFileChanges(s.file)
 
 			if s.expectedError == "" {
@@ -197,6 +186,7 @@ func TestWorkingTreeDiscardAllFileChanges(t *testing.T) {
 			} else {
 				assert.Equal(t, s.expectedError, err.Error())
 			}
+			assert.Equal(t, s.expectedRemovedFiles, removedFiles)
 			s.runner.CheckForMissingCalls()
 		})
 	}
