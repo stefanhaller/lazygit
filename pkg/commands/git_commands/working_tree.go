@@ -219,8 +219,7 @@ func (self *WorkingTreeCommands) RemoveUntrackedDirFiles(node IFileNode) error {
 	)
 
 	for _, path := range untrackedFilePaths {
-		err := os.Remove(path)
-		if err != nil {
+		if err := self.os.RemoveFile(path); err != nil {
 			return err
 		}
 	}
