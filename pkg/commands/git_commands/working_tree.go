@@ -238,10 +238,8 @@ func (self *WorkingTreeCommands) DiscardAllDirChanges(nodes []IFileNode) error {
 		return err
 	}
 
-	for _, path := range filesToRemove {
-		if err := self.os.RemoveFile(path); err != nil {
-			return err
-		}
+	if err := self.removeFiles(filesToRemove); err != nil {
+		return err
 	}
 
 	return runGitCmdOnPaths("checkout", filesToCheckout, self.cmd)
@@ -268,13 +266,22 @@ func (self *WorkingTreeCommands) DiscardUnstagedDirChanges(nodes []IFileNode) er
 		})
 	}
 
-	for _, path := range filesToRemove {
+	if err := self.removeFiles(filesToRemove); err != nil {
+		return err
+	}
+
+	return runGitCmdOnPaths("checkout", filesToCheckout, self.cmd)
+}
+
+// Removes the given files from disk.
+func (self *WorkingTreeCommands) removeFiles(paths []string) error {
+	for _, path := range paths {
 		if err := self.os.RemoveFile(path); err != nil {
 			return err
 		}
 	}
 
-	return runGitCmdOnPaths("checkout", filesToCheckout, self.cmd)
+	return nil
 }
 
 func (self *WorkingTreeCommands) RemoveUntrackedDirFiles(node IFileNode) error {
