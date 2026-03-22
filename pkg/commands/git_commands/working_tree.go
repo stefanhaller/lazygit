@@ -3,13 +3,16 @@ package git_commands
 import (
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
 
 	"github.com/go-errors/errors"
+	"github.com/jesseduffield/generics/set"
 	"github.com/jesseduffield/lazygit/pkg/commands/models"
 	"github.com/jesseduffield/lazygit/pkg/commands/oscommands"
+	"github.com/samber/lo"
 )
 
 type WorkingTreeCommands struct {
@@ -238,7 +241,7 @@ func (self *WorkingTreeCommands) DiscardAllDirChanges(nodes []IFileNode) error {
 		return err
 	}
 
-	if err := self.removeFiles(filesToRemove); err != nil {
+	if err := self.removeFiles(filesToRemove, nodes); err != nil {
 		return err
 	}
 
@@ -266,22 +269,77 @@ func (self *WorkingTreeCommands) DiscardUnstagedDirChanges(nodes []IFileNode) er
 		})
 	}
 
-	if err := self.removeFiles(filesToRemove); err != nil {
+	if err := self.removeFiles(filesToRemove, nodes); err != nil {
 		return err
 	}
 
 	return runGitCmdOnPaths("checkout", filesToCheckout, self.cmd)
 }
 
-// Removes the given files from disk.
-func (self *WorkingTreeCommands) removeFiles(paths []string) error {
+// Removes the given files from disk, and also removes any directories that have become empty
+// because of this.
+func (self *WorkingTreeCommands) removeFiles(paths []string, selectedNodes []IFileNode) error {
 	for _, path := range paths {
 		if err := self.os.RemoveFile(path); err != nil {
 			return err
 		}
 	}
 
+	return self.removeEmptyDirs(paths, selectedDirPaths(selectedNodes))
+}
+
+// Removes empty directories left behind after deleting files, but only for directories that
+// are at or below a selected directory node. It works bottom-up so that nested empty directories
+// are also cleaned up. Directories that still have contents are skipped.
+func (self *WorkingTreeCommands) removeEmptyDirs(removedFilePaths []string, selectedDirs []string) error {
+	candidates := set.NewFromSlice(
+		lo.FilterMap(removedFilePaths, func(filePath string, _ int) (string, bool) {
+			dir := path.Dir(filePath)
+			return dir, dir != "." && isUnderSelectedDir(dir, selectedDirs)
+		}))
+
+	for {
+		var removed []string
+		for _, dir := range candidates.ToSlice() {
+			empty, err := self.os.IsDirEmpty(dir)
+			if err != nil {
+				return err
+			}
+			if empty {
+				if err := self.os.RemoveDir(dir); err != nil {
+					return err
+				}
+				removed = append(removed, dir)
+			}
+		}
+		if len(removed) == 0 {
+			break
+		}
+		for _, dir := range removed {
+			candidates.Remove(dir)
+			if parent := path.Dir(dir); parent != "." && isUnderSelectedDir(parent, selectedDirs) {
+				candidates.Add(parent)
+			}
+		}
+	}
 	return nil
+}
+
+func isUnderSelectedDir(path string, selectedDirs []string) bool {
+	isSubdir := func(parent, child string) bool {
+		rel, err := filepath.Rel(parent, child)
+		return err == nil && !strings.HasPrefix(rel, "..")
+	}
+
+	return lo.SomeBy(selectedDirs, func(selectedDir string) bool {
+		return isSubdir(selectedDir, path)
+	})
+}
+
+func selectedDirPaths(nodes []IFileNode) []string {
+	return lo.FilterMap(nodes, func(node IFileNode, _ int) (string, bool) {
+		return node.GetPath(), node.GetFile() == nil
+	})
 }
 
 func (self *WorkingTreeCommands) RemoveUntrackedDirFiles(node IFileNode) error {
