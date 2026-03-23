@@ -72,7 +72,7 @@ func Test_getBranchDisplayStrings(t *testing.T) {
 			useIcons:             true,
 			checkedOutByWorktree: true,
 			showDivergenceCfg:    "none",
-			expected:             []string{"1m", "󰘬", "branch_name (󰌹 other-worktree)"},
+			expected:             []string{"1m", "branch_name (󰌹 other-worktree)"},
 		},
 		{
 			branch: &models.Branch{
@@ -219,11 +219,11 @@ func Test_getBranchDisplayStrings(t *testing.T) {
 			branch:               &models.Branch{Name: "branch_name", Recency: "1m"},
 			itemOperation:        types.ItemOperationNone,
 			fullDescription:      false,
-			viewWidth:            14,
+			viewWidth:            12,
 			useIcons:             true,
 			checkedOutByWorktree: true,
 			showDivergenceCfg:    "none",
-			expected:             []string{"1m", "󰘬", "branc… 󰌹"},
+			expected:             []string{"1m", "branc… 󰌹"},
 		},
 		{
 			branch: &models.Branch{

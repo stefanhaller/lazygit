@@ -63,9 +63,6 @@ func getBranchDisplayStrings(
 	if len(divergence) > 0 {
 		availableWidth -= utils.StringWidth(divergence) + 1
 	}
-	if icons.IsIconEnabled() {
-		availableWidth -= 2 // one for the icon, one for the space
-	}
 	if showCommitHash {
 		availableWidth -= utils.COMMIT_HASH_SHORT_SIZE + 1
 	}
@@ -135,10 +132,6 @@ func getBranchDisplayStrings(
 
 	res := make([]string, 0, 6)
 	res = append(res, recencyColor.Sprint(b.Recency))
-
-	if icons.IsIconEnabled() {
-		res = append(res, nameTextStyle.Sprint(icons.IconForBranch(b)))
-	}
 
 	if showCommitHash {
 		res = append(res, utils.ShortHash(b.CommitHash))
