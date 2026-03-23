@@ -209,6 +209,7 @@ func (self *RefreshHelper) Refresh(options types.RefreshOptions) {
 func getScopeNames(scopes []types.RefreshableView) []string {
 	scopeNameMap := map[types.RefreshableView]string{
 		types.COMMITS:         "commits",
+		types.REBASE_COMMITS:  "rebaseCommits",
 		types.BRANCHES:        "branches",
 		types.FILES:           "files",
 		types.SUBMODULES:      "submodules",
@@ -221,7 +222,9 @@ func getScopeNames(scopes []types.RefreshableView) []string {
 		types.STATUS:          "status",
 		types.BISECT_INFO:     "bisect",
 		types.STAGING:         "staging",
+		types.PATCH_BUILDING:  "patchBuilding",
 		types.MERGE_CONFLICTS: "mergeConflicts",
+		types.COMMIT_FILES:    "commitFiles",
 	}
 
 	return lo.Map(scopes, func(scope types.RefreshableView, _ int) string {
