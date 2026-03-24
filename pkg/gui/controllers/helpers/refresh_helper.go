@@ -30,6 +30,12 @@ type RefreshHelper struct {
 	mergeConflictsHelper *MergeConflictsHelper
 	worktreeHelper       *WorktreeHelper
 	searchHelper         *SearchHelper
+
+	// Tracks repos for which the user has dismissed the "select base GitHub remote"
+	// prompt, to avoid re-prompting on every subsequent refresh within the same session.
+	// Keyed by repo path so that switching to a different repo while lazygit is running
+	// still triggers the prompt there.
+	githubBaseRemotePromptDismissed map[string]bool
 }
 
 func NewRefreshHelper(
@@ -813,7 +819,9 @@ func (self *RefreshHelper) refreshGithubPullRequests() {
 
 	baseRemote := self.getGithubBaseRemote()
 	if baseRemote == nil {
-		self.promptForBaseGithubRepo(authToken)
+		if !self.githubBaseRemotePromptDismissed[self.c.Git().RepoPaths.RepoPath()] {
+			self.promptForBaseGithubRepo(authToken)
+		}
 		return
 	}
 
@@ -879,6 +887,13 @@ func (self *RefreshHelper) promptForBaseGithubRepo(authToken string) {
 	_ = self.c.Menu(types.CreateMenuOptions{
 		Title: self.c.Tr.SelectRemoteRepository,
 		Items: menuItems,
+		OnCancel: func() error {
+			if self.githubBaseRemotePromptDismissed == nil {
+				self.githubBaseRemotePromptDismissed = make(map[string]bool)
+			}
+			self.githubBaseRemotePromptDismissed[self.c.Git().RepoPaths.RepoPath()] = true
+			return nil
+		},
 	})
 }
 
