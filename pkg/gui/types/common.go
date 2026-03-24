@@ -154,6 +154,7 @@ type CreateMenuOptions struct {
 	Prompt                     string // a message that will be displayed above the menu options
 	Items                      []*MenuItem
 	HideCancel                 bool
+	OnCancel                   func() error // called when the menu is dismissed without selecting an item
 	ColumnAlignment            []utils.Alignment
 	AllowFilteringKeybindings  bool
 	KeepConflictingKeybindings bool // if true, the keybindings that match essential bindings such as confirm or return will not be removed from menu items
