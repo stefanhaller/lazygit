@@ -329,7 +329,7 @@ func (self *FilesController) GetOnRenderToMain() func() {
 	}
 }
 
-func (self *FilesController) GetOnClick() func() error {
+func (self *FilesController) GetOnDoubleClick() func() error {
 	return self.withItemGraceful(func(node *filetree.FileNode) error {
 		return self.press([]*filetree.FileNode{node})
 	})

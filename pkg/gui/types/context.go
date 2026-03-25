@@ -91,10 +91,10 @@ type IBaseContext interface {
 	AddMouseKeybindingsFn(MouseKeybindingsFn)
 	ClearAllAttachedControllerFunctions()
 
-	// This is a bit of a hack at the moment: we currently only set an onclick function so that
-	// our list controller can come along and wrap it in a list-specific click handler.
+	// This is a bit of a hack at the moment: we currently only set an onDoubleClick function so
+	// that the generic ListController can be specialized by view-specific controllers.
 	// We'll need to think of a better way to do this.
-	AddOnClickFn(func() error)
+	AddOnDoubleClickFn(func() error)
 	// Likewise for the focused main view: we need this to communicate between a
 	// side panel controller and the focused main view controller.
 	AddOnClickFocusedMainViewFn(func(mainViewName string, clickedLineIdx int) error)
@@ -246,7 +246,7 @@ type (
 type HasKeybindings interface {
 	GetKeybindings(opts KeybindingsOpts) []*Binding
 	GetMouseKeybindings(opts KeybindingsOpts) []*gocui.ViewMouseBinding
-	GetOnClick() func() error
+	GetOnDoubleClick() func() error
 	GetOnClickFocusedMainView() func(mainViewName string, clickedLineIdx int) error
 }
 

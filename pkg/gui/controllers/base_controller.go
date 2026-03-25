@@ -15,7 +15,7 @@ func (self *baseController) GetMouseKeybindings(opts types.KeybindingsOpts) []*g
 	return nil
 }
 
-func (self *baseController) GetOnClick() func() error {
+func (self *baseController) GetOnDoubleClick() func() error {
 	return nil
 }
 

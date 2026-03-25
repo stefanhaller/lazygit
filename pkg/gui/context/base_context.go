@@ -15,7 +15,7 @@ type BaseContext struct {
 
 	keybindingsFns           []types.KeybindingsFn
 	mouseKeybindingsFns      []types.MouseKeybindingsFn
-	onClickFn                func() error
+	onDoubleClickFn          func() error
 	onClickFocusedMainViewFn onClickFocusedMainViewFn
 	onRenderToMainFn         func()
 	onFocusFns               []onFocusFn
@@ -140,17 +140,17 @@ func (self *BaseContext) ClearAllAttachedControllerFunctions() {
 	self.mouseKeybindingsFns = nil
 	self.onFocusFns = nil
 	self.onFocusLostFns = nil
-	self.onClickFn = nil
+	self.onDoubleClickFn = nil
 	self.onClickFocusedMainViewFn = nil
 	self.onRenderToMainFn = nil
 }
 
-func (self *BaseContext) AddOnClickFn(fn func() error) {
+func (self *BaseContext) AddOnDoubleClickFn(fn func() error) {
 	if fn != nil {
-		if self.onClickFn != nil {
-			panic("only one controller is allowed to set an onClickFn")
+		if self.onDoubleClickFn != nil {
+			panic("only one controller is allowed to set an onDoubleClickFn")
 		}
-		self.onClickFn = fn
+		self.onDoubleClickFn = fn
 	}
 }
 
@@ -163,8 +163,8 @@ func (self *BaseContext) AddOnClickFocusedMainViewFn(fn onClickFocusedMainViewFn
 	}
 }
 
-func (self *BaseContext) GetOnClick() func() error {
-	return self.onClickFn
+func (self *BaseContext) GetOnDoubleClick() func() error {
+	return self.onDoubleClickFn
 }
 
 func (self *BaseContext) GetOnClickFocusedMainView() onClickFocusedMainViewFn {
