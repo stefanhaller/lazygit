@@ -246,7 +246,13 @@ type (
 type HasKeybindings interface {
 	GetKeybindings(opts KeybindingsOpts) []*Binding
 	GetMouseKeybindings(opts KeybindingsOpts) []*gocui.ViewMouseBinding
+
+	// Implement this to get called when there's a double-click on the view. Only supported by list
+	// views currently. Will be called after the double-clicked list entry has been selected.
 	GetOnDoubleClick() func() error
+
+	// Implement this in a side-panel controller to get called when there's a click in the main view
+	// that belongs to your panel while the main view is already focused.
 	GetOnClickFocusedMainView() func(mainViewName string, clickedLineIdx int) error
 }
 
