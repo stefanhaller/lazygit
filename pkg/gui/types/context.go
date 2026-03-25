@@ -151,6 +151,7 @@ type ISearchableContext interface {
 
 	// This must be implemented by each concrete context. Return nil if not searching the model.
 	ModelSearchResults(searchStr string, caseSensitive bool) []gocui.SearchPosition
+	OnSearchSelect(selectedLineIdx int)
 }
 
 type DiffableContext interface {
