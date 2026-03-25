@@ -282,6 +282,8 @@ type TranslationSet struct {
 	AllBranchesLogGraphReverse            string
 	UnsupportedGitService                 string
 	CopyPullRequestURL                    string
+	OpenPullRequestInBrowser              string
+	NoPullRequestForBranch                string
 	NoBranchOnRemote                      string
 	Fetch                                 string
 	FetchTooltip                          string
@@ -1397,6 +1399,8 @@ func EnglishTranslationSet() *TranslationSet {
 		UnsupportedGitService:                `Unsupported git service`,
 		CreatePullRequest:                    `Create pull request`,
 		CopyPullRequestURL:                   `Copy pull request URL to clipboard`,
+		OpenPullRequestInBrowser:             `Open pull request in browser`,
+		NoPullRequestForBranch:               `No pull request found for this branch`,
 		NoBranchOnRemote:                     `This branch doesn't exist on remote. You need to push it to remote first.`,
 		Fetch:                                `Fetch`,
 		FetchTooltip:                         "Fetch changes from remote.",

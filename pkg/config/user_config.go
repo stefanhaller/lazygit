@@ -531,24 +531,25 @@ type KeybindingFilesConfig struct {
 }
 
 type KeybindingBranchesConfig struct {
-	CreatePullRequest      string `yaml:"createPullRequest"`
-	ViewPullRequestOptions string `yaml:"viewPullRequestOptions"`
-	CopyPullRequestURL     string `yaml:"copyPullRequestURL"`
-	CheckoutBranchByName   string `yaml:"checkoutBranchByName"`
-	ForceCheckoutBranch    string `yaml:"forceCheckoutBranch"`
-	CheckoutPreviousBranch string `yaml:"checkoutPreviousBranch"`
-	RebaseBranch           string `yaml:"rebaseBranch"`
-	RenameBranch           string `yaml:"renameBranch"`
-	MergeIntoCurrentBranch string `yaml:"mergeIntoCurrentBranch"`
-	MoveCommitsToNewBranch string `yaml:"moveCommitsToNewBranch"`
-	ViewGitFlowOptions     string `yaml:"viewGitFlowOptions"`
-	FastForward            string `yaml:"fastForward"`
-	CreateTag              string `yaml:"createTag"`
-	PushTag                string `yaml:"pushTag"`
-	SetUpstream            string `yaml:"setUpstream"`
-	FetchRemote            string `yaml:"fetchRemote"`
-	AddForkRemote          string `yaml:"addForkRemote"`
-	SortOrder              string `yaml:"sortOrder"`
+	CreatePullRequest        string `yaml:"createPullRequest"`
+	ViewPullRequestOptions   string `yaml:"viewPullRequestOptions"`
+	OpenPullRequestInBrowser string `yaml:"openPullRequestInBrowser"`
+	CopyPullRequestURL       string `yaml:"copyPullRequestURL"`
+	CheckoutBranchByName     string `yaml:"checkoutBranchByName"`
+	ForceCheckoutBranch      string `yaml:"forceCheckoutBranch"`
+	CheckoutPreviousBranch   string `yaml:"checkoutPreviousBranch"`
+	RebaseBranch             string `yaml:"rebaseBranch"`
+	RenameBranch             string `yaml:"renameBranch"`
+	MergeIntoCurrentBranch   string `yaml:"mergeIntoCurrentBranch"`
+	MoveCommitsToNewBranch   string `yaml:"moveCommitsToNewBranch"`
+	ViewGitFlowOptions       string `yaml:"viewGitFlowOptions"`
+	FastForward              string `yaml:"fastForward"`
+	CreateTag                string `yaml:"createTag"`
+	PushTag                  string `yaml:"pushTag"`
+	SetUpstream              string `yaml:"setUpstream"`
+	FetchRemote              string `yaml:"fetchRemote"`
+	AddForkRemote            string `yaml:"addForkRemote"`
+	SortOrder                string `yaml:"sortOrder"`
 }
 
 type KeybindingWorktreesConfig struct {
@@ -579,6 +580,7 @@ type KeybindingCommitsConfig struct {
 	CopyCommitAttributeToClipboard string `yaml:"copyCommitAttributeToClipboard"`
 	OpenLogMenu                    string `yaml:"openLogMenu"`
 	OpenInBrowser                  string `yaml:"openInBrowser"`
+	OpenPullRequestInBrowser       string `yaml:"openPullRequestInBrowser"`
 	ViewBisectOptions              string `yaml:"viewBisectOptions"`
 	StartInteractiveRebase         string `yaml:"startInteractiveRebase"`
 	SelectCommitsOfCurrentBranch   string `yaml:"selectCommitsOfCurrentBranch"`
@@ -996,24 +998,25 @@ func GetDefaultConfig() *UserConfig {
 				ExpandAll:                "=",
 			},
 			Branches: KeybindingBranchesConfig{
-				CopyPullRequestURL:     "<c-y>",
-				CreatePullRequest:      "o",
-				ViewPullRequestOptions: "O",
-				CheckoutBranchByName:   "c",
-				ForceCheckoutBranch:    "F",
-				CheckoutPreviousBranch: "-",
-				RebaseBranch:           "r",
-				RenameBranch:           "R",
-				MergeIntoCurrentBranch: "M",
-				MoveCommitsToNewBranch: "N",
-				ViewGitFlowOptions:     "i",
-				FastForward:            "f",
-				CreateTag:              "T",
-				PushTag:                "P",
-				SetUpstream:            "u",
-				FetchRemote:            "f",
-				AddForkRemote:          "F",
-				SortOrder:              "s",
+				CopyPullRequestURL:       "<c-y>",
+				CreatePullRequest:        "o",
+				ViewPullRequestOptions:   "O",
+				OpenPullRequestInBrowser: "G",
+				CheckoutBranchByName:     "c",
+				ForceCheckoutBranch:      "F",
+				CheckoutPreviousBranch:   "-",
+				RebaseBranch:             "r",
+				RenameBranch:             "R",
+				MergeIntoCurrentBranch:   "M",
+				MoveCommitsToNewBranch:   "N",
+				ViewGitFlowOptions:       "i",
+				FastForward:              "f",
+				CreateTag:                "T",
+				PushTag:                  "P",
+				SetUpstream:              "u",
+				FetchRemote:              "f",
+				AddForkRemote:            "F",
+				SortOrder:                "s",
 			},
 			Worktrees: KeybindingWorktreesConfig{
 				ViewWorktreeOptions: "w",
@@ -1042,6 +1045,7 @@ func GetDefaultConfig() *UserConfig {
 				CopyCommitAttributeToClipboard: "y",
 				OpenLogMenu:                    "<c-l>",
 				OpenInBrowser:                  "o",
+				OpenPullRequestInBrowser:       "G",
 				ViewBisectOptions:              "b",
 				StartInteractiveRebase:         "i",
 				SelectCommitsOfCurrentBranch:   "*",

@@ -82,6 +82,12 @@ func (self *BranchesController) GetKeybindings(opts types.KeybindingsOpts) []*ty
 			OpensMenu:         true,
 		},
 		{
+			Key:               opts.GetKey(opts.Config.Branches.OpenPullRequestInBrowser),
+			Handler:           self.withItem(self.openPRInBrowser),
+			GetDisabledReason: self.require(self.singleItemSelected(self.branchHasPR)),
+			Description:       self.c.Tr.OpenPullRequestInBrowser,
+		},
+		{
 			Key:               opts.GetKey(opts.Config.Branches.CopyPullRequestURL),
 			Handler:           self.copyPullRequestURL,
 			GetDisabledReason: self.require(self.singleItemSelected()),
@@ -928,6 +934,27 @@ func (self *BranchesController) branchIsReal(branch *models.Branch) *types.Disab
 	}
 
 	return nil
+}
+
+func (self *BranchesController) branchHasPR(branch *models.Branch) *types.DisabledReason {
+	if _, ok := self.c.Model().PullRequestsMap[branch.Name]; !ok {
+		return &types.DisabledReason{Text: self.c.Tr.NoPullRequestForBranch, ShowErrorInPanel: true}
+	}
+
+	return nil
+}
+
+func (self *BranchesController) openPRInBrowser(branch *models.Branch) error {
+	pr, ok := self.c.Model().PullRequestsMap[branch.Name]
+	if !ok {
+		// Should be guarded against by the DisabledReason check, but be defensive in case
+		// PullRequestsMap was updated concurrently by a background refresh
+		return errors.New(self.c.Tr.NoPullRequestForBranch)
+	}
+
+	self.c.LogAction(self.c.Tr.Actions.OpenPullRequest)
+
+	return self.c.OS().OpenLink(pr.Url)
 }
 
 func (self *BranchesController) branchesAreReal(selectedBranches []*models.Branch, startIdx int, endIdx int) *types.DisabledReason {

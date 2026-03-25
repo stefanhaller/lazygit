@@ -861,6 +861,10 @@
           "type": "string",
           "default": "O"
         },
+        "openPullRequestInBrowser": {
+          "type": "string",
+          "default": "G"
+        },
         "copyPullRequestURL": {
           "type": "string",
           "default": "\u003cc-y\u003e"
@@ -1042,6 +1046,10 @@
         "openInBrowser": {
           "type": "string",
           "default": "o"
+        },
+        "openPullRequestInBrowser": {
+          "type": "string",
+          "default": "G"
         },
         "viewBisectOptions": {
           "type": "string",

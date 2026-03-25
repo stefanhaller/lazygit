@@ -707,6 +707,7 @@ keybinding:
   branches:
     createPullRequest: o
     viewPullRequestOptions: O
+    openPullRequestInBrowser: G
     copyPullRequestURL: <c-y>
     checkoutBranchByName: c
     forceCheckoutBranch: F
@@ -749,6 +750,7 @@ keybinding:
     copyCommitAttributeToClipboard: "y"
     openLogMenu: <c-l>
     openInBrowser: o
+    openPullRequestInBrowser: G
     viewBisectOptions: b
     startInteractiveRebase: i
     selectCommitsOfCurrentBranch: '*'
