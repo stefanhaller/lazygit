@@ -246,7 +246,14 @@ func (self *ListController) HandleClick(opts gocui.ViewMouseBindingOpts) error {
 	if opts.IsDoubleClick && alreadyFocused && self.context.GetOnDoubleClick() != nil {
 		return self.context.GetOnDoubleClick()()
 	}
+
 	self.context.HandleFocus(types.OnFocusOpts{})
+
+	// Let view-specific controllers do additional click handling
+	if self.context.GetOnClick() != nil {
+		return self.context.GetOnClick()(opts)
+	}
+
 	return nil
 }
 
