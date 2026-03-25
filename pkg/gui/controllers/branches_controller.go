@@ -525,16 +525,23 @@ func (self *BranchesController) handleCreatePullRequestMenu(selectedBranch *mode
 	return self.createPullRequestMenu(selectedBranch, checkedOutBranch)
 }
 
-func (self *BranchesController) copyPullRequestURL() error {
+func (self *BranchesController) getPullRequestURL() (string, error) {
 	branch := self.context().GetSelected()
+	if pr, ok := self.c.Model().PullRequestsMap[branch.Name]; ok {
+		return pr.Url, nil
+	}
 
 	branchExistsOnRemote := self.c.Git().Remote.CheckRemoteBranchExists(branch.Name)
 
 	if !branchExistsOnRemote {
-		return errors.New(self.c.Tr.NoBranchOnRemote)
+		return "", errors.New(self.c.Tr.NoBranchOnRemote)
 	}
 
-	url, err := self.c.Helpers().Host.GetPullRequestURL(branch.Name, "")
+	return self.c.Helpers().Host.GetPullRequestURL(branch.Name, "")
+}
+
+func (self *BranchesController) copyPullRequestURL() error {
+	url, err := self.getPullRequestURL()
 	if err != nil {
 		return err
 	}
