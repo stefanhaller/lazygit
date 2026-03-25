@@ -10,6 +10,7 @@ import (
 	"github.com/jesseduffield/gocui"
 	"github.com/jesseduffield/lazygit/pkg/commands/git_commands"
 	"github.com/jesseduffield/lazygit/pkg/commands/models"
+	"github.com/jesseduffield/lazygit/pkg/config"
 	"github.com/jesseduffield/lazygit/pkg/gui/context"
 	"github.com/jesseduffield/lazygit/pkg/gui/filetree"
 	"github.com/jesseduffield/lazygit/pkg/gui/mergeconflicts"
@@ -907,8 +908,30 @@ func (self *RefreshHelper) setGithubPullRequests(authToken string, baseRemote *m
 	}
 
 	self.c.Model().PullRequests = prs
+	self.savePullRequestsToCache(prs)
 	self.rebuildPullRequestsMap()
 
 	self.c.PostRefreshUpdate(self.c.Contexts().Branches)
 	return nil
+}
+
+func (self *RefreshHelper) savePullRequestsToCache(prs []*models.GithubPullRequest) {
+	repoPath := self.c.Git().RepoPaths.RepoPath()
+	cached := lo.Map(prs, func(pr *models.GithubPullRequest, _ int) config.CachedPullRequest {
+		return config.CachedPullRequest{
+			HeadRefName:         pr.HeadRefName,
+			Number:              pr.Number,
+			Title:               pr.Title,
+			State:               pr.State,
+			Url:                 pr.Url,
+			HeadRepositoryOwner: pr.HeadRepositoryOwner.Login,
+		}
+	})
+
+	appState := self.c.GetAppState()
+	if appState.GithubPullRequests == nil {
+		appState.GithubPullRequests = make(map[string][]config.CachedPullRequest)
+	}
+	appState.GithubPullRequests[repoPath] = cached
+	self.c.SaveAppStateAndLogError()
 }
