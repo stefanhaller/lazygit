@@ -609,6 +609,8 @@ type TranslationSet struct {
 	CyclePagersDisabledReason             string
 	StartSearch                           string
 	StartFilter                           string
+	SelectRemoteRepository                string
+	FetchingPullRequests                  string
 	Keybindings                           string
 	KeybindingsLegend                     string
 	KeybindingsMenuSectionLocal           string
@@ -1730,6 +1732,8 @@ func EnglishTranslationSet() *TranslationSet {
 		CyclePagersDisabledReason:        "No other pagers configured",
 		StartSearch:                      "Search the current view by text",
 		StartFilter:                      "Filter the current view by text",
+		SelectRemoteRepository:           "Select base repository for pull requests",
+		FetchingPullRequests:             "Fetching pull requests",
 		KeybindingsLegend:                "Legend: `<c-b>` means ctrl+b, `<a-b>` means alt+b, `B` means shift+b",
 		RenameBranch:                     "Rename branch",
 		BranchUpstreamOptionsTitle:       "Upstream options",
