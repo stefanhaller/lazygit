@@ -2,11 +2,9 @@ package commands
 
 import (
 	"os"
-	"strings"
 
 	"github.com/go-errors/errors"
 
-	gogit "github.com/jesseduffield/go-git/v5"
 	"github.com/jesseduffield/lazygit/pkg/commands/git_commands"
 	"github.com/jesseduffield/lazygit/pkg/commands/git_config"
 	"github.com/jesseduffield/lazygit/pkg/commands/oscommands"
@@ -72,24 +70,12 @@ func NewGitCommand(
 		return nil, utils.WrapError(err)
 	}
 
-	repository, err := gogit.PlainOpenWithOptions(
-		repoPaths.WorktreeGitDirPath(),
-		&gogit.PlainOpenOptions{DetectDotGit: false, EnableDotGitCommonDir: true},
-	)
-	if err != nil {
-		if strings.Contains(err.Error(), `unquoted '\' must be followed by new line`) {
-			return nil, errors.New(cmn.Tr.GitconfigParseErr)
-		}
-		return nil, err
-	}
-
 	return NewGitCommandAux(
 		cmn,
 		version,
 		osCommand,
 		gitConfig,
 		repoPaths,
-		repository,
 		pagerConfig,
 	), nil
 }
@@ -100,7 +86,6 @@ func NewGitCommandAux(
 	osCommand *oscommands.OSCommand,
 	gitConfig git_config.IGitConfig,
 	repoPaths *git_commands.RepoPaths,
-	repo *gogit.Repository,
 	pagerConfig *config.PagerConfig,
 ) *GitCommand {
 	cmd := NewGitCmdObjBuilder(cmn.Log, osCommand.Cmd)
@@ -112,7 +97,7 @@ func NewGitCommandAux(
 	// common ones are: cmn, osCommand, dotGitDir, configCommands
 	configCommands := git_commands.NewConfigCommands(cmn, gitConfig)
 
-	gitCommon := git_commands.NewGitCommon(cmn, version, cmd, osCommand, repoPaths, repo, configCommands, pagerConfig)
+	gitCommon := git_commands.NewGitCommon(cmn, version, cmd, osCommand, repoPaths, configCommands, pagerConfig)
 
 	fileLoader := git_commands.NewFileLoader(gitCommon, cmd, configCommands)
 	statusCommands := git_commands.NewStatusCommands(gitCommon)
