@@ -3,7 +3,6 @@ package git_commands
 import (
 	"strings"
 
-	gogit "github.com/jesseduffield/go-git/v5"
 	"github.com/jesseduffield/lazygit/pkg/commands/git_config"
 	"github.com/jesseduffield/lazygit/pkg/commands/oscommands"
 	"github.com/jesseduffield/lazygit/pkg/common"
@@ -19,18 +18,15 @@ type ConfigCommands struct {
 	*common.Common
 
 	gitConfig git_config.IGitConfig
-	repo      *gogit.Repository
 }
 
 func NewConfigCommands(
 	common *common.Common,
 	gitConfig git_config.IGitConfig,
-	repo *gogit.Repository,
 ) *ConfigCommands {
 	return &ConfigCommands{
 		Common:    common,
 		gitConfig: gitConfig,
-		repo:      repo,
 	}
 }
 

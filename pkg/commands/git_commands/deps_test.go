@@ -76,7 +76,7 @@ func buildGitCommon(deps commonDeps) *GitCommon {
 	}
 
 	gitCommon.repo = buildRepo()
-	gitCommon.config = NewConfigCommands(gitCommon.Common, gitConfig, gitCommon.repo)
+	gitCommon.config = NewConfigCommands(gitCommon.Common, gitConfig)
 
 	getenv := deps.getenv
 	if getenv == nil {
