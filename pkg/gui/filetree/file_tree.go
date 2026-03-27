@@ -180,11 +180,13 @@ func (self *FileTree) GetAllFiles() []*models.File {
 
 func (self *FileTree) SetTree() {
 	filesForDisplay := self.getFilesForDisplay()
-	showRootItem := self.common.UserConfig().Gui.ShowRootItemInFileTree
+	guiConfig := self.common.UserConfig().Gui
+	showRootItem := guiConfig.ShowRootItemInFileTree
+	cmp := NodeSortComparator[models.File](guiConfig.FileTreeSortOrder, guiConfig.FileTreeSortCaseSensitive)
 	if self.showTree {
-		self.tree = BuildTreeFromFiles(filesForDisplay, showRootItem)
+		self.tree = BuildTreeFromFiles(filesForDisplay, showRootItem, cmp)
 	} else {
-		self.tree = BuildFlatTreeFromFiles(filesForDisplay, showRootItem)
+		self.tree = BuildFlatTreeFromFiles(filesForDisplay, showRootItem, cmp)
 	}
 }
 
