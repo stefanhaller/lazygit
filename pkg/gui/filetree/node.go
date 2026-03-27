@@ -324,12 +324,8 @@ func (self *Node[T]) GetPathsMatching(predicate func(*Node[T]) bool) []string {
 }
 
 func (self *Node[T]) GetFilePathsMatching(predicate func(*T) bool) []string {
-	matchingFileNodes := lo.Filter(self.GetLeaves(), func(node *Node[T], _ int) bool {
-		return predicate(node.File)
-	})
-
-	return lo.Map(matchingFileNodes, func(node *Node[T], _ int) string {
-		return node.GetPath()
+	return lo.FilterMap(self.GetLeaves(), func(node *Node[T], _ int) (string, bool) {
+		return node.GetPath(), predicate(node.File)
 	})
 }
 
