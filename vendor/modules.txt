@@ -89,7 +89,7 @@ github.com/integrii/flaggy
 github.com/jesseduffield/generics/maps
 github.com/jesseduffield/generics/orderedset
 github.com/jesseduffield/generics/set
-# github.com/jesseduffield/gocui v0.3.1-0.20260308162933-5e45e57b5564
+# github.com/jesseduffield/gocui v0.3.1-0.20260327132312-944dab3bc980
 ## explicit; go 1.25
 github.com/jesseduffield/gocui
 # github.com/jesseduffield/lazycore v0.0.0-20221012050358-03d2e40243c5
@@ -188,19 +188,19 @@ golang.org/x/exp/constraints
 golang.org/x/exp/slices
 # golang.org/x/net v0.47.0
 ## explicit; go 1.24.0
-# golang.org/x/sync v0.19.0
-## explicit; go 1.24.0
+# golang.org/x/sync v0.20.0
+## explicit; go 1.25.0
 golang.org/x/sync/errgroup
 # golang.org/x/sys v0.42.0
 ## explicit; go 1.25.0
 golang.org/x/sys/plan9
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/term v0.40.0
-## explicit; go 1.24.0
+# golang.org/x/term v0.41.0
+## explicit; go 1.25.0
 golang.org/x/term
-# golang.org/x/text v0.34.0
-## explicit; go 1.24.0
+# golang.org/x/text v0.35.0
+## explicit; go 1.25.0
 golang.org/x/text/encoding
 golang.org/x/text/encoding/internal/identifier
 golang.org/x/text/runes
