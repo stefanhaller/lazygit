@@ -965,6 +965,7 @@ type Log struct {
 	EditRebaseFromBaseCommit string
 	DroppingStash            string
 	PoppingStash             string
+	DeletingBranch           string
 }
 
 type Actions struct {
@@ -2201,6 +2202,7 @@ func EnglishTranslationSet() *TranslationSet {
 			EditRebaseFromBaseCommit: "Beginning interactive rebase from '{{.baseCommit}}' onto '{{.targetBranchName}}'",
 			DroppingStash:            "Dropping stash %s",
 			PoppingStash:             "Popping stash %s",
+			DeletingBranch:           "Deleting branch '{{.branchName}}' (was {{.hash}})",
 		},
 		BreakingChangesTitle: "Breaking Changes",
 		BreakingChangesMessage: `You are updating to a new version of lazygit which contains breaking changes. Please review the notes below and update your configuration if necessary.
