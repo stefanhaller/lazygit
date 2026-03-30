@@ -50,11 +50,11 @@ func TestGetVisualDepthAtIndex(t *testing.T) {
 			showRootItem: true,
 			// Displayed as:
 			//   index 0: ▼ /         (depth 0)
+			//   index 4:   c          (depth 1)
 			//   index 1:   ▼ dir     (depth 1)
 			//   index 2:     a        (depth 2)
 			//   index 3:     b        (depth 2)
-			//   index 4:   c          (depth 1)
-			expectedDepths: []int{0, 1, 2, 2, 1},
+			expectedDepths: []int{0, 1, 1, 2, 2},
 		},
 		{
 			name: "compressed paths with root item",
@@ -113,7 +113,7 @@ func TestGetVisualDepthAtIndex(t *testing.T) {
 
 	for _, s := range scenarios {
 		t.Run(s.name, func(t *testing.T) {
-			tree := BuildTreeFromFiles(s.files, s.showRootItem)
+			tree := BuildTreeFromFiles(s.files, s.showRootItem, NodeSortComparator[models.File]("mixed", false))
 			collapsedPaths := NewCollapsedPaths()
 			for _, p := range s.collapsedPaths {
 				collapsedPaths.Collapse(p)
