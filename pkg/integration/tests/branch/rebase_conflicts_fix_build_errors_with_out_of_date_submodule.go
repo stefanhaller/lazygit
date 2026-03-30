@@ -90,12 +90,9 @@ var RebaseConflictsFixBuildErrorsWithOutOfDateSubmodule = NewIntegrationTest(New
 
 		t.Views().Files().
 			Lines(
-				/* EXPECTED:
 				Equals("▼ /").IsSelected(),
 				Equals("   M submodule (submodule)"),
 				Equals("  ?? untracked-file"),
-				ACTUAL: */
-				Equals("?? untracked-file"),
 			)
 
 		t.Views().Commits().
@@ -109,10 +106,7 @@ var RebaseConflictsFixBuildErrorsWithOutOfDateSubmodule = NewIntegrationTest(New
 
 		t.Views().Main().
 			Content(
-				/* EXPECTED:
 				DoesNotContain("submodule").DoesNotContain("untracked-file"),
-				ACTUAL: */
-				Contains("submodule").DoesNotContain("untracked-file"),
 			)
 	},
 })
