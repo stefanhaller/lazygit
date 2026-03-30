@@ -19,6 +19,8 @@ type commonDeps struct {
 	gitConfig  *git_config.FakeGitConfig
 	getenv     func(string) string
 	removeFile func(string) error
+	isDirEmpty func(string) (bool, error)
+	removeDir  func(string) error
 	common     *common.Common
 	cmd        *oscommands.CmdObjBuilder
 	fs         afero.Fs
@@ -86,11 +88,23 @@ func buildGitCommon(deps commonDeps) *GitCommon {
 		removeFile = func(string) error { return errors.New("unexpected call to removeFile") }
 	}
 
+	isDirEmpty := deps.isDirEmpty
+	if isDirEmpty == nil {
+		isDirEmpty = func(string) (bool, error) { return false, nil }
+	}
+
+	removeDir := deps.removeDir
+	if removeDir == nil {
+		removeDir = func(string) error { return errors.New("unexpected call to removeDir") }
+	}
+
 	gitCommon.os = oscommands.NewDummyOSCommandWithDeps(oscommands.OSCommandDeps{
 		Common:       gitCommon.Common,
 		GetenvFn:     getenv,
 		Cmd:          cmd,
 		RemoveFileFn: removeFile,
+		IsDirEmptyFn: isDirEmpty,
+		RemoveDirFn:  removeDir,
 		TempDir:      os.TempDir(),
 	})
 

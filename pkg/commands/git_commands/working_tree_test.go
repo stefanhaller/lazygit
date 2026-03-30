@@ -475,14 +475,17 @@ func TestWorkingTreeDiscardUnstagedFileChanges(t *testing.T) {
 
 // testNode implements IFileNode for unit tests.
 type testNode struct {
-	files []*models.File // all leaf files under this node
-	path  string
-	file  *models.File // non-nil only for file nodes
+	children []*testNode
+	path     string
+	file     *models.File // non-nil only for file nodes
 }
 
 func (n *testNode) ForEachFile(cb func(*models.File) error) error {
-	for _, f := range n.files {
-		if err := cb(f); err != nil {
+	if n.file != nil {
+		return cb(n.file)
+	}
+	for _, child := range n.children {
+		if err := child.ForEachFile(cb); err != nil {
 			return err
 		}
 	}
@@ -490,8 +493,14 @@ func (n *testNode) ForEachFile(cb func(*models.File) error) error {
 }
 
 func (n *testNode) GetFilePathsMatching(test func(*models.File) bool) []string {
-	return lo.FilterMap(n.files, func(f *models.File, _ int) (string, bool) {
-		return f.Path, test(f)
+	if n.file != nil {
+		if test(n.file) {
+			return []string{n.path}
+		}
+		return nil
+	}
+	return lo.FlatMap(n.children, func(child *testNode, _ int) []string {
+		return child.GetFilePathsMatching(test)
 	})
 }
 
@@ -500,20 +509,22 @@ func (n *testNode) GetFile() *models.File { return n.file }
 
 func TestWorkingTreeDiscardAllDirChanges(t *testing.T) {
 	type scenario struct {
-		testName             string
-		nodes                []IFileNode
-		runner               *oscommands.FakeCmdObjRunner
-		expectedRemovedFiles []string
+		testName               string
+		nodes                  []IFileNode
+		runner                 *oscommands.FakeCmdObjRunner
+		dirsWithRemainingFiles []string // dirs where isDirEmpty returns false
+		expectedRemovedFiles   []string
+		expectedRemovedDirs    []string
 	}
 
 	scenarios := []scenario{
 		{
 			testName: "multiple regular tracked files batched into a single checkout call",
 			nodes: []IFileNode{&testNode{
-				files: []*models.File{
-					{Path: "a.txt", Tracked: true},
-					{Path: "b.txt", Tracked: true},
-					{Path: "c.txt", Tracked: true},
+				children: []*testNode{
+					{path: "a.txt", file: &models.File{Path: "a.txt", Tracked: true}},
+					{path: "b.txt", file: &models.File{Path: "b.txt", Tracked: true}},
+					{path: "c.txt", file: &models.File{Path: "c.txt", Tracked: true}},
 				},
 			}},
 			runner: oscommands.NewFakeRunner(t).
@@ -522,9 +533,9 @@ func TestWorkingTreeDiscardAllDirChanges(t *testing.T) {
 		{
 			testName: "staged files batched into a single reset then a single checkout",
 			nodes: []IFileNode{&testNode{
-				files: []*models.File{
-					{Path: "a.txt", Tracked: true, HasStagedChanges: true},
-					{Path: "b.txt", Tracked: true, HasStagedChanges: true},
+				children: []*testNode{
+					{path: "a.txt", file: &models.File{Path: "a.txt", Tracked: true, HasStagedChanges: true}},
+					{path: "b.txt", file: &models.File{Path: "b.txt", Tracked: true, HasStagedChanges: true}},
 				},
 			}},
 			runner: oscommands.NewFakeRunner(t).
@@ -534,9 +545,9 @@ func TestWorkingTreeDiscardAllDirChanges(t *testing.T) {
 		{
 			testName: "added files with no staged changes are removed from disk without any git call",
 			nodes: []IFileNode{&testNode{
-				files: []*models.File{
-					{Path: "new1.txt", Added: true},
-					{Path: "new2.txt", Added: true},
+				children: []*testNode{
+					{path: "new1.txt", file: &models.File{Path: "new1.txt", Added: true}},
+					{path: "new2.txt", file: &models.File{Path: "new2.txt", Added: true}},
 				},
 			}},
 			runner:               oscommands.NewFakeRunner(t),
@@ -547,22 +558,69 @@ func TestWorkingTreeDiscardAllDirChanges(t *testing.T) {
 			nodes: []IFileNode{
 				&testNode{
 					path: "dir1",
-					files: []*models.File{
-						{Path: "dir1/a.txt", Tracked: true},
-						{Path: "dir1/b.txt", Added: true},
+					children: []*testNode{
+						{path: "dir1/a.txt", file: &models.File{Path: "dir1/a.txt", Tracked: true}},
+						{path: "dir1/b.txt", file: &models.File{Path: "dir1/b.txt", Added: true}},
 					},
 				},
 				&testNode{
 					path: "dir2",
-					files: []*models.File{
-						{Path: "dir2/c.txt", Tracked: true},
-						{Path: "dir2/d.txt", Added: true},
+					children: []*testNode{
+						{path: "dir2/c.txt", file: &models.File{Path: "dir2/c.txt", Tracked: true}},
+						{path: "dir2/d.txt", file: &models.File{Path: "dir2/d.txt", Added: true}},
 					},
 				},
 			},
 			runner: oscommands.NewFakeRunner(t).
 				ExpectGitArgs([]string{"checkout", "--", "dir1/a.txt", "dir2/c.txt"}, "", nil),
-			expectedRemovedFiles: []string{"dir1/b.txt", "dir2/d.txt"},
+			dirsWithRemainingFiles: []string{"dir1", "dir2"}, // tracked files a.txt / c.txt remain
+			expectedRemovedFiles:   []string{"dir1/b.txt", "dir2/d.txt"},
+		},
+		{
+			testName: "empty parent directory is removed after all its added files are deleted",
+			nodes: []IFileNode{&testNode{
+				path: "dir",
+				children: []*testNode{
+					{
+						path: "dir/newdir",
+						children: []*testNode{
+							{path: "dir/newdir/a.txt", file: &models.File{Path: "dir/newdir/a.txt", Added: true}},
+							{path: "dir/newdir/b.txt", file: &models.File{Path: "dir/newdir/b.txt", Added: true}},
+						},
+					},
+				},
+			}},
+			runner:                 oscommands.NewFakeRunner(t),
+			dirsWithRemainingFiles: []string{"dir"}, // assume there are other tracked files in dir
+			expectedRemovedFiles:   []string{"dir/newdir/a.txt", "dir/newdir/b.txt"},
+			expectedRemovedDirs:    []string{"dir/newdir"},
+		},
+		{
+			testName: "nested empty directories are removed bottom-up",
+			nodes: []IFileNode{&testNode{
+				path: "newdir",
+				children: []*testNode{
+					{
+						path: "newdir/sub",
+						children: []*testNode{
+							{path: "newdir/sub/file.txt", file: &models.File{Path: "newdir/sub/file.txt", Added: true}},
+						},
+					},
+				},
+			}},
+			runner:               oscommands.NewFakeRunner(t),
+			expectedRemovedFiles: []string{"newdir/sub/file.txt"},
+			expectedRemovedDirs:  []string{"newdir/sub", "newdir"},
+		},
+		{
+			testName: "empty directory is NOT removed when individual file nodes are selected",
+			nodes: []IFileNode{
+				&testNode{path: "newdir/a.txt", file: &models.File{Path: "newdir/a.txt", Added: true}},
+				&testNode{path: "newdir/b.txt", file: &models.File{Path: "newdir/b.txt", Added: true}},
+			},
+			runner:               oscommands.NewFakeRunner(t),
+			expectedRemovedFiles: []string{"newdir/a.txt", "newdir/b.txt"},
+			// newdir becomes empty but was not selected as a directory node, so it is not removed
 		},
 	}
 
@@ -573,10 +631,22 @@ func TestWorkingTreeDiscardAllDirChanges(t *testing.T) {
 				removedFiles = append(removedFiles, path)
 				return nil
 			}
-			instance := buildWorkingTreeCommands(commonDeps{runner: s.runner, removeFile: removeFile})
+			isDirEmpty := func(path string) (bool, error) { return !lo.Contains(s.dirsWithRemainingFiles, path), nil }
+			var removedDirs []string
+			removeDir := func(path string) error {
+				removedDirs = append(removedDirs, path)
+				return nil
+			}
+			instance := buildWorkingTreeCommands(commonDeps{
+				runner:     s.runner,
+				removeFile: removeFile,
+				isDirEmpty: isDirEmpty,
+				removeDir:  removeDir,
+			})
 			err := instance.DiscardAllDirChanges(s.nodes)
 			assert.NoError(t, err)
 			assert.Equal(t, s.expectedRemovedFiles, removedFiles)
+			assert.Equal(t, s.expectedRemovedDirs, removedDirs)
 			s.runner.CheckForMissingCalls()
 		})
 	}
@@ -584,10 +654,12 @@ func TestWorkingTreeDiscardAllDirChanges(t *testing.T) {
 
 func TestWorkingTreeDiscardUnstagedDirChanges(t *testing.T) {
 	type scenario struct {
-		testName             string
-		nodes                []IFileNode
-		runner               *oscommands.FakeCmdObjRunner
-		expectedRemovedFiles []string
+		testName               string
+		nodes                  []IFileNode
+		runner                 *oscommands.FakeCmdObjRunner
+		dirsWithRemainingFiles []string // dirs where isDirEmpty returns false
+		expectedRemovedFiles   []string
+		expectedRemovedDirs    []string
 	}
 
 	scenarios := []scenario{
@@ -595,40 +667,41 @@ func TestWorkingTreeDiscardUnstagedDirChanges(t *testing.T) {
 			testName: "directory node: removes untracked files and checks out tracked files by path, not by directory",
 			nodes: []IFileNode{&testNode{
 				path: "dir",
-				files: []*models.File{
-					{Path: "dir/tracked1.txt", Tracked: true},
-					{Path: "dir/tracked2.txt", Tracked: true},
-					{Path: "dir/new.txt", Tracked: false},
+				children: []*testNode{
+					{path: "dir/tracked1.txt", file: &models.File{Path: "dir/tracked1.txt", Tracked: true}},
+					{path: "dir/tracked2.txt", file: &models.File{Path: "dir/tracked2.txt", Tracked: true}},
+					{path: "dir/new.txt", file: &models.File{Path: "dir/new.txt", Tracked: false}},
 				},
 			}},
 			// Must checkout the individual files, not "dir" — otherwise a filter would be ignored.
 			runner: oscommands.NewFakeRunner(t).
 				ExpectGitArgs([]string{"checkout", "--", "dir/tracked1.txt", "dir/tracked2.txt"}, "", nil),
-			expectedRemovedFiles: []string{"dir/new.txt"},
+			dirsWithRemainingFiles: []string{"dir"}, // tracked files remain in dir
+			expectedRemovedFiles:   []string{"dir/new.txt"},
 		},
 		{
 			testName: "directory node: staged-but-not-committed file (Tracked=false, HasStagedChanges=true) is left alone; purely untracked file is removed",
 			nodes: []IFileNode{&testNode{
 				path: "dir",
-				files: []*models.File{
+				children: []*testNode{
 					// Staged new files: not removed from disk, but checked out in
 					// case they also have unstaged changes on top (AM status).
-					{Path: "dir/staged-new1.txt", Tracked: false, Added: true, HasStagedChanges: true},
-					{Path: "dir/staged-new2.txt", Tracked: false, Added: true, HasStagedChanges: true},
+					{path: "dir/staged-new1.txt", file: &models.File{Path: "dir/staged-new1.txt", Tracked: false, Added: true, HasStagedChanges: true}},
+					{path: "dir/staged-new2.txt", file: &models.File{Path: "dir/staged-new2.txt", Tracked: false, Added: true, HasStagedChanges: true}},
 					// Purely untracked file: removed from disk, not checked out.
-					{Path: "dir/untracked.txt", Tracked: false, Added: true, HasStagedChanges: false},
+					{path: "dir/untracked.txt", file: &models.File{Path: "dir/untracked.txt", Tracked: false, Added: true, HasStagedChanges: false}},
 				},
 			}},
 			runner: oscommands.NewFakeRunner(t).
 				ExpectGitArgs([]string{"checkout", "--", "dir/staged-new1.txt", "dir/staged-new2.txt"}, "", nil),
-			expectedRemovedFiles: []string{"dir/untracked.txt"},
+			dirsWithRemainingFiles: []string{"dir"}, // staged files remain in dir
+			expectedRemovedFiles:   []string{"dir/untracked.txt"},
 		},
 		{
 			testName: "file node: added and unstaged file is removed from disk",
 			nodes: []IFileNode{&testNode{
-				path:  "new.txt",
-				files: []*models.File{{Path: "new.txt", Added: true}},
-				file:  &models.File{Path: "new.txt", Added: true, HasStagedChanges: false},
+				path: "new.txt",
+				file: &models.File{Path: "new.txt", Added: true, HasStagedChanges: false},
 			}},
 			runner:               oscommands.NewFakeRunner(t),
 			expectedRemovedFiles: []string{"new.txt"},
@@ -638,22 +711,46 @@ func TestWorkingTreeDiscardUnstagedDirChanges(t *testing.T) {
 			nodes: []IFileNode{
 				&testNode{
 					path: "dir1",
-					files: []*models.File{
-						{Path: "dir1/tracked.txt", Tracked: true},
-						{Path: "dir1/untracked.txt", Tracked: false},
+					children: []*testNode{
+						{path: "dir1/tracked.txt", file: &models.File{Path: "dir1/tracked.txt", Tracked: true}},
+						{path: "dir1/untracked.txt", file: &models.File{Path: "dir1/untracked.txt", Tracked: false}},
 					},
 				},
 				&testNode{
 					path: "dir2",
-					files: []*models.File{
-						{Path: "dir2/tracked.txt", Tracked: true},
-						{Path: "dir2/untracked.txt", Tracked: false},
+					children: []*testNode{
+						{path: "dir2/tracked.txt", file: &models.File{Path: "dir2/tracked.txt", Tracked: true}},
+						{path: "dir2/untracked.txt", file: &models.File{Path: "dir2/untracked.txt", Tracked: false}},
 					},
 				},
 			},
 			runner: oscommands.NewFakeRunner(t).
 				ExpectGitArgs([]string{"checkout", "--", "dir1/tracked.txt", "dir2/tracked.txt"}, "", nil),
-			expectedRemovedFiles: []string{"dir1/untracked.txt", "dir2/untracked.txt"},
+			dirsWithRemainingFiles: []string{"dir1", "dir2"}, // tracked files remain
+			expectedRemovedFiles:   []string{"dir1/untracked.txt", "dir2/untracked.txt"},
+		},
+		{
+			testName: "empty untracked directory is removed after its files are deleted",
+			nodes: []IFileNode{&testNode{
+				path: "newdir",
+				children: []*testNode{
+					{path: "newdir/a.txt", file: &models.File{Path: "newdir/a.txt", Tracked: false}},
+					{path: "newdir/b.txt", file: &models.File{Path: "newdir/b.txt", Tracked: false}},
+				},
+			}},
+			runner:               oscommands.NewFakeRunner(t),
+			expectedRemovedFiles: []string{"newdir/a.txt", "newdir/b.txt"},
+			expectedRemovedDirs:  []string{"newdir"},
+		},
+		{
+			testName: "empty directory is NOT removed when individual file nodes are selected",
+			nodes: []IFileNode{
+				&testNode{path: "newdir/a.txt", file: &models.File{Path: "newdir/a.txt", Tracked: false}},
+				&testNode{path: "newdir/b.txt", file: &models.File{Path: "newdir/b.txt", Tracked: false}},
+			},
+			runner:               oscommands.NewFakeRunner(t),
+			expectedRemovedFiles: []string{"newdir/a.txt", "newdir/b.txt"},
+			// newdir becomes empty but was not selected as a directory node, so it is not removed
 		},
 	}
 
@@ -664,10 +761,22 @@ func TestWorkingTreeDiscardUnstagedDirChanges(t *testing.T) {
 				removedFiles = append(removedFiles, path)
 				return nil
 			}
-			instance := buildWorkingTreeCommands(commonDeps{runner: s.runner, removeFile: removeFile})
+			isDirEmpty := func(path string) (bool, error) { return !lo.Contains(s.dirsWithRemainingFiles, path), nil }
+			var removedDirs []string
+			removeDir := func(path string) error {
+				removedDirs = append(removedDirs, path)
+				return nil
+			}
+			instance := buildWorkingTreeCommands(commonDeps{
+				runner:     s.runner,
+				removeFile: removeFile,
+				isDirEmpty: isDirEmpty,
+				removeDir:  removeDir,
+			})
 			assert.NoError(t, instance.DiscardUnstagedDirChanges(s.nodes))
 			s.runner.CheckForMissingCalls()
 			assert.Equal(t, s.expectedRemovedFiles, removedFiles)
+			assert.Equal(t, s.expectedRemovedDirs, removedDirs)
 		})
 	}
 }
