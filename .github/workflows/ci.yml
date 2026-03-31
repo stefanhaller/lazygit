@@ -206,10 +206,12 @@ jobs:
 
       - name: Upload to Codacy
         run: |
-          CODACY_PROJECT_TOKEN=${{ secrets.CODACY_PROJECT_TOKEN }} \
+          CODACY_PROJECT_TOKEN="${CODACY_PROJECT_TOKEN}" \
             bash <(curl -Ls https://coverage.codacy.com/get.sh) report \
             --force-coverage-parser go -r coverage.out
 
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
   check-for-fixups:
     runs-on: ubuntu-latest
     if: github.ref != 'refs/heads/master'
