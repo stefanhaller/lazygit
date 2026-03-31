@@ -285,7 +285,7 @@ func TestGetWindowDimensions(t *testing.T) {
 		{
 			name: "half screen mode, enlargedSideViewLocation left",
 			mutateArgs: func(args *WindowArrangementArgs) {
-				args.Height = 20 // smaller height because we don't more here
+				args.Height = 20 // smaller height because we don't need more here
 				args.ScreenMode = types.SCREEN_HALF
 				args.UserConfig.Gui.EnlargedSideViewLocation = "left"
 			},
@@ -317,7 +317,7 @@ func TestGetWindowDimensions(t *testing.T) {
 		{
 			name: "half screen mode, enlargedSideViewLocation top",
 			mutateArgs: func(args *WindowArrangementArgs) {
-				args.Height = 20 // smaller height because we don't more here
+				args.Height = 20 // smaller height because we don't need more here
 				args.ScreenMode = types.SCREEN_HALF
 				args.UserConfig.Gui.EnlargedSideViewLocation = "top"
 			},
