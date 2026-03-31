@@ -298,6 +298,16 @@ gui:
   # One of 'auto' (default) | 'always' | 'never'
   portraitMode: auto
 
+  # In 'auto' mode, portrait mode will be used if the window width is less than or
+  # equal to portraitModeAutoMaxWidth and the window height is greater than or
+  # equal to portraitModeAutoMinHeight. Unused when portraitMode is not 'auto'.
+  portraitModeAutoMaxWidth: 84
+
+  # In 'auto' mode, portrait mode will be used if the window width is less than or
+  # equal to portraitModeAutoMaxWidth and the window height is greater than or
+  # equal to portraitModeAutoMinHeight. Unused when portraitMode is not 'auto'.
+  portraitModeAutoMinHeight: 46
+
   # How things are filtered when typing '/'.
   # One of 'substring' (default) | 'fuzzy'
   filterMode: substring

@@ -187,6 +187,10 @@ type GuiConfig struct {
 	// Whether to stack UI components on top of each other.
 	// One of 'auto' (default) | 'always' | 'never'
 	PortraitMode string `yaml:"portraitMode"`
+	// In 'auto' mode, portrait mode will be used if the window width is less than or equal to portraitModeAutoMaxWidth and the window height is greater than or equal to portraitModeAutoMinHeight. Unused when portraitMode is not 'auto'.
+	PortraitModeAutoMaxWidth int `yaml:"portraitModeAutoMaxWidth"`
+	// In 'auto' mode, portrait mode will be used if the window width is less than or equal to portraitModeAutoMaxWidth and the window height is greater than or equal to portraitModeAutoMinHeight. Unused when portraitMode is not 'auto'.
+	PortraitModeAutoMinHeight int `yaml:"portraitModeAutoMinHeight"`
 	// How things are filtered when typing '/'.
 	// One of 'substring' (default) | 'fuzzy'
 	FilterMode string `yaml:"filterMode" jsonschema:"enum=substring,enum=fuzzy"`
@@ -820,6 +824,8 @@ func GetDefaultConfig() *UserConfig {
 			Border:                              "rounded",
 			AnimateExplosion:                    true,
 			PortraitMode:                        "auto",
+			PortraitModeAutoMaxWidth:            84,
+			PortraitModeAutoMinHeight:           46,
 			FilterMode:                          "substring",
 			Spinner: SpinnerConfig{
 				Frames: []string{"|", "/", "-", "\\"},
