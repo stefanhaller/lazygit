@@ -4,33 +4,33 @@ import (
 	"github.com/jesseduffield/lazygit/pkg/gocui"
 )
 
-func (gui *Gui) handleEditorKeypress(v *gocui.View, key gocui.KeyName, ch rune, mod gocui.Modifier, allowMultiline bool) bool {
-	if key == gocui.KeyEnter && allowMultiline {
+func (gui *Gui) handleEditorKeypress(v *gocui.View, key gocui.Key, mod gocui.Modifier, allowMultiline bool) bool {
+	if key.KeyName() == gocui.KeyEnter && allowMultiline {
 		v.TextArea.TypeCharacter("\n")
 		v.RenderTextArea()
 		return true
 	}
 
-	return gocui.DefaultEditor.Edit(v, key, ch, mod)
+	return gocui.DefaultEditor.Edit(v, key, mod)
 }
 
 // we've just copy+pasted the editor from gocui to here so that we can also re-
 // render the commit message length on each keypress
-func (gui *Gui) commitMessageEditor(v *gocui.View, key gocui.KeyName, ch rune, mod gocui.Modifier) bool {
-	matched := gui.handleEditorKeypress(v, key, ch, mod, false)
+func (gui *Gui) commitMessageEditor(v *gocui.View, key gocui.Key, mod gocui.Modifier) bool {
+	matched := gui.handleEditorKeypress(v, key, mod, false)
 	v.RenderTextArea()
 	gui.c.Contexts().CommitMessage.RenderSubtitle()
 	return matched
 }
 
-func (gui *Gui) commitDescriptionEditor(v *gocui.View, key gocui.KeyName, ch rune, mod gocui.Modifier) bool {
-	matched := gui.handleEditorKeypress(v, key, ch, mod, true)
+func (gui *Gui) commitDescriptionEditor(v *gocui.View, key gocui.Key, mod gocui.Modifier) bool {
+	matched := gui.handleEditorKeypress(v, key, mod, true)
 	v.RenderTextArea()
 	return matched
 }
 
-func (gui *Gui) promptEditor(v *gocui.View, key gocui.KeyName, ch rune, mod gocui.Modifier) bool {
-	matched := gui.handleEditorKeypress(v, key, ch, mod, false)
+func (gui *Gui) promptEditor(v *gocui.View, key gocui.Key, mod gocui.Modifier) bool {
+	matched := gui.handleEditorKeypress(v, key, mod, false)
 
 	v.RenderTextArea()
 
@@ -46,8 +46,8 @@ func (gui *Gui) promptEditor(v *gocui.View, key gocui.KeyName, ch rune, mod gocu
 	return matched
 }
 
-func (gui *Gui) searchEditor(v *gocui.View, key gocui.KeyName, ch rune, mod gocui.Modifier) bool {
-	matched := gui.handleEditorKeypress(v, key, ch, mod, false)
+func (gui *Gui) searchEditor(v *gocui.View, key gocui.Key, mod gocui.Modifier) bool {
+	matched := gui.handleEditorKeypress(v, key, mod, false)
 	v.RenderTextArea()
 
 	searchString := v.TextArea.GetContent()

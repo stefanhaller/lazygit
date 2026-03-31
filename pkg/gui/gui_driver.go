@@ -31,18 +31,8 @@ func (self *GuiDriver) PressKey(keyStr string) {
 
 	key := keybindings.GetKey(keyStr)
 
-	var r rune
-	var tcellKey tcell.Key
-	switch v := key.(type) {
-	case rune:
-		r = v
-		tcellKey = tcell.KeyRune
-	case gocui.KeyName:
-		tcellKey = tcell.Key(v)
-	}
-
 	self.gui.g.ReplayedEvents.Keys <- gocui.NewTcellKeyEventWrapper(
-		tcell.NewEventKey(tcellKey, r, tcell.ModNone),
+		tcell.NewEventKey(tcell.Key(key.KeyName()), key.Ch(), tcell.ModNone),
 		0,
 	)
 

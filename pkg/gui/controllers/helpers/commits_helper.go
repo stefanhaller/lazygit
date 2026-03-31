@@ -228,7 +228,7 @@ func (self *CommitsHelper) OpenCommitMenu(suggestionFunc func(string) []*types.S
 			OnPress: func() error {
 				return self.SwitchToEditor()
 			},
-			Key:            'e',
+			Key:            gocui.NewKeyRune('e'),
 			DisabledReason: disabledReasonForOpenInEditor,
 		},
 		{
@@ -236,14 +236,14 @@ func (self *CommitsHelper) OpenCommitMenu(suggestionFunc func(string) []*types.S
 			OnPress: func() error {
 				return self.addCoAuthor(suggestionFunc)
 			},
-			Key: 'c',
+			Key: gocui.NewKeyRune('c'),
 		},
 		{
 			Label: self.c.Tr.PasteCommitMessageFromClipboard,
 			OnPress: func() error {
 				return self.pasteCommitMessageFromClipboard()
 			},
-			Key: 'p',
+			Key: gocui.NewKeyRune('p'),
 		},
 	}
 	return self.c.Menu(types.CreateMenuOptions{

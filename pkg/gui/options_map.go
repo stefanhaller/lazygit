@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/jesseduffield/generics/set"
+	"github.com/jesseduffield/lazygit/pkg/gocui"
 	"github.com/jesseduffield/lazygit/pkg/gui/context"
 	"github.com/jesseduffield/lazygit/pkg/gui/controllers/helpers"
 	"github.com/jesseduffield/lazygit/pkg/gui/keybindings"
@@ -40,7 +41,7 @@ func (self *OptionsMapMgr) renderContextOptionsMap() {
 	globalBindings := self.c.Contexts().Global.GetKeybindings(self.c.KeybindingsOpts())
 
 	currentContextKeys := set.NewFromSlice(
-		lo.Map(currentContextBindings, func(binding *types.Binding, _ int) types.Key {
+		lo.Map(currentContextBindings, func(binding *types.Binding, _ int) gocui.Key {
 			return binding.Key
 		}))
 

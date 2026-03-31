@@ -361,7 +361,7 @@ func (self *LocalCommitsController) fixup(selectedCommits []*models.Commit, star
 		Items: []*types.MenuItem{
 			{
 				Label: self.c.Tr.Fixup,
-				Key:   'f',
+				Key:   gocui.NewKeyRune('f'),
 				OnPress: func() error {
 					return self.c.WithWaitingStatus(self.c.Tr.FixingStatus, func(gocui.Task) error {
 						self.c.LogAction(self.c.Tr.Actions.FixupCommit)
@@ -372,7 +372,7 @@ func (self *LocalCommitsController) fixup(selectedCommits []*models.Commit, star
 			},
 			{
 				Label: self.c.Tr.FixupKeepMessage,
-				Key:   'c',
+				Key:   gocui.NewKeyRune('c'),
 				OnPress: func() error {
 					return self.c.WithWaitingStatus(self.c.Tr.FixingStatus, func(gocui.Task) error {
 						self.c.LogAction(self.c.Tr.Actions.FixupCommitKeepMessage)
@@ -403,7 +403,7 @@ func (self *LocalCommitsController) setFixupMessage(commit *models.Commit) error
 		Items: []*types.MenuItem{
 			{
 				Label: self.c.Tr.FixupDiscardMessage,
-				Key:   'f',
+				Key:   gocui.NewKeyRune('f'),
 				OnPress: func() error {
 					return self.updateTodosWithFlag(todo.Fixup, []*models.Commit{commit}, "")
 				},
@@ -411,7 +411,7 @@ func (self *LocalCommitsController) setFixupMessage(commit *models.Commit) error
 			},
 			{
 				Label: self.c.Tr.FixupKeepMessage,
-				Key:   'c',
+				Key:   gocui.NewKeyRune('c'),
 				OnPress: func() error {
 					return self.updateTodosWithFlag(todo.Fixup, []*models.Commit{commit}, "-C")
 				},
@@ -1000,7 +1000,7 @@ func (self *LocalCommitsController) createFixupCommit(commit *models.Commit) err
 		Items: []*types.MenuItem{
 			{
 				Label: self.c.Tr.FixupMenu_Fixup,
-				Key:   'f',
+				Key:   gocui.NewKeyRune('f'),
 				OnPress: func() error {
 					return self.c.Helpers().WorkingTree.WithEnsureCommittableFiles(func() error {
 						self.c.LogAction(self.c.Tr.Actions.CreateFixupCommit)
@@ -1024,7 +1024,7 @@ func (self *LocalCommitsController) createFixupCommit(commit *models.Commit) err
 			},
 			{
 				Label: self.c.Tr.FixupMenu_AmendWithChanges,
-				Key:   'a',
+				Key:   gocui.NewKeyRune('a'),
 				OnPress: func() error {
 					return self.c.Helpers().WorkingTree.WithEnsureCommittableFiles(func() error {
 						return self.createAmendCommit(commit, true)
@@ -1035,7 +1035,7 @@ func (self *LocalCommitsController) createFixupCommit(commit *models.Commit) err
 			},
 			{
 				Label:   self.c.Tr.FixupMenu_AmendWithoutChanges,
-				Key:     'r',
+				Key:     gocui.NewKeyRune('r'),
 				OnPress: func() error { return self.createAmendCommit(commit, false) },
 				Tooltip: self.c.Tr.FixupMenu_AmendWithoutChangesTooltip,
 			},
@@ -1134,14 +1134,14 @@ func (self *LocalCommitsController) squashFixupCommits() error {
 				Label:          self.c.Tr.SquashCommitsInCurrentBranch,
 				OnPress:        self.squashAllFixupsInCurrentBranch,
 				DisabledReason: self.canFindCommitForSquashFixupsInCurrentBranch(),
-				Key:            'b',
+				Key:            gocui.NewKeyRune('b'),
 				Tooltip:        self.c.Tr.SquashCommitsInCurrentBranchTooltip,
 			},
 			{
 				Label:          self.c.Tr.SquashCommitsAboveSelectedCommit,
 				OnPress:        self.withItem(self.squashAllFixupsAboveSelectedCommit),
 				DisabledReason: self.singleItemSelected()(),
-				Key:            'a',
+				Key:            gocui.NewKeyRune('a'),
 				Tooltip:        self.c.Tr.SquashCommitsAboveSelectedTooltip,
 			},
 		},

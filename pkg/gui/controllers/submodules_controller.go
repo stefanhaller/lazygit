@@ -94,7 +94,6 @@ func (self *SubmodulesController) GetKeybindings(opts types.KeybindingsOpts) []*
 			OpensMenu:   true,
 		},
 		{
-			Key:         nil,
 			Handler:     self.easterEgg,
 			Description: self.c.Tr.EasterEgg,
 		},
@@ -234,7 +233,7 @@ func (self *SubmodulesController) openBulkActionsMenu() error {
 						return nil
 					})
 				},
-				Key: 'i',
+				Key: gocui.NewKeyRune('i'),
 			},
 			{
 				LabelColumns: []string{self.c.Tr.BulkUpdateSubmodules, style.FgYellow.Sprint(self.c.Git().Submodule.BulkUpdateCmdObj().ToString())},
@@ -249,7 +248,7 @@ func (self *SubmodulesController) openBulkActionsMenu() error {
 						return nil
 					})
 				},
-				Key: 'u',
+				Key: gocui.NewKeyRune('u'),
 			},
 			{
 				LabelColumns: []string{self.c.Tr.BulkUpdateRecursiveSubmodules, style.FgYellow.Sprint(self.c.Git().Submodule.BulkUpdateRecursivelyCmdObj().ToString())},
@@ -264,7 +263,7 @@ func (self *SubmodulesController) openBulkActionsMenu() error {
 						return nil
 					})
 				},
-				Key: 'r',
+				Key: gocui.NewKeyRune('r'),
 			},
 			{
 				LabelColumns: []string{self.c.Tr.BulkDeinitSubmodules, style.FgRed.Sprint(self.c.Git().Submodule.BulkDeinitCmdObj().ToString())},
@@ -279,7 +278,7 @@ func (self *SubmodulesController) openBulkActionsMenu() error {
 						return nil
 					})
 				},
-				Key: 'd',
+				Key: gocui.NewKeyRune('d'),
 			},
 		},
 	})
