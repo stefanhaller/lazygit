@@ -28,7 +28,7 @@ require (
 	github.com/rivo/uniseg v0.4.7
 	github.com/sahilm/fuzzy v0.1.0
 	github.com/samber/lo v1.31.0
-	github.com/sanity-io/litter v1.5.2
+	github.com/sanity-io/litter v1.5.8
 	github.com/sasha-s/go-deadlock v0.3.6
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/afero v1.15.0
