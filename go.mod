@@ -34,7 +34,7 @@ require (
 	github.com/spf13/afero v1.15.0
 	github.com/spkg/bom v0.0.0-20160624110644-59b7046e48ad
 	github.com/stefanhaller/git-todo-parser v0.0.7-0.20250905083220-c50528f08304
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
 	golang.org/x/sync v0.20.0

@@ -172,7 +172,7 @@ github.com/spkg/bom
 # github.com/stefanhaller/git-todo-parser v0.0.7-0.20250905083220-c50528f08304
 ## explicit; go 1.13
 github.com/stefanhaller/git-todo-parser/todo
-# github.com/stretchr/testify v1.10.0
+# github.com/stretchr/testify v1.11.1
 ## explicit; go 1.17
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/assert/yaml
