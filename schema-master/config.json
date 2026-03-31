@@ -769,6 +769,16 @@
           "description": "Whether to stack UI components on top of each other.\nOne of 'auto' (default) | 'always' | 'never'",
           "default": "auto"
         },
+        "portraitModeAutoMaxWidth": {
+          "type": "integer",
+          "description": "In 'auto' mode, portrait mode will be used if the window width is less than or equal to portraitModeAutoMaxWidth and the window height is greater than or equal to portraitModeAutoMinHeight. Unused when portraitMode is not 'auto'.",
+          "default": 84
+        },
+        "portraitModeAutoMinHeight": {
+          "type": "integer",
+          "description": "In 'auto' mode, portrait mode will be used if the window width is less than or equal to portraitModeAutoMaxWidth and the window height is greater than or equal to portraitModeAutoMinHeight. Unused when portraitMode is not 'auto'.",
+          "default": 46
+        },
         "filterMode": {
           "type": "string",
           "enum": [
