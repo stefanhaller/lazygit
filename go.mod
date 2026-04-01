@@ -33,7 +33,7 @@ require (
 	github.com/sasha-s/go-deadlock v0.3.6
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/afero v1.15.0
-	github.com/spkg/bom v0.0.0-20160624110644-59b7046e48ad
+	github.com/spkg/bom v1.0.1
 	github.com/stefanhaller/git-todo-parser v0.0.7-0.20250905083220-c50528f08304
 	github.com/stretchr/testify v1.11.1
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e
