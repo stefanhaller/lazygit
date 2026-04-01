@@ -228,6 +228,10 @@ If you press `shift+w` on a commit (or branch/ref) a menu will open that allows 
 
 ![diff_commits](../assets/demo/diff_commits-compressed.gif)
 
+### Show GitHub pull requests
+
+In the branches panel, lazygit can show which of your branches have an associated GitHub pull request by showing a GitHub icon next to the branch name; its color shows the state of the PR (open, merged, etc.). For those that have one, you can press `shift-G` to open the PR in the browser. There is no configuration needed to enable this, but it requires the [`gh`](https://cli.github.com/) tool to be installed, and you need to do `gh auth login` once to allow lazygit to access GitHub.
+
 ## Tutorials
 
 [<img src="https://i.imgur.com/sVEktDn.png">](https://youtu.be/CPLdltN7wgE)

@@ -489,6 +489,8 @@ func (gui *Gui) onUserConfigLoaded() error {
 		icons.SetNerdFontsVersion(userConfig.Gui.NerdFontsVersion)
 	} else if userConfig.Gui.ShowIcons {
 		icons.SetNerdFontsVersion("2")
+	} else {
+		icons.SetNerdFontsVersion("")
 	}
 
 	if len(userConfig.Gui.BranchColorPatterns) > 0 {
@@ -599,6 +601,8 @@ func (gui *Gui) resetState(startArgs appTypes.StartArgs) types.Context {
 			Authors:               map[string]*models.Author{},
 			MainBranches:          git_commands.NewMainBranches(gui.c.Common, gui.os.Cmd),
 			HashPool:              &utils.StringPool{},
+			PullRequests:          gui.loadCachedPullRequests(),
+			PullRequestsMap:       make(map[string]*models.GithubPullRequest),
 		},
 		Modes: &types.Modes{
 			Filtering:        filtering.New(startArgs.FilterPath, ""),
@@ -617,6 +621,24 @@ func (gui *Gui) resetState(startArgs appTypes.StartArgs) types.Context {
 	gui.RepoStateMap[Repo(worktreePath)] = gui.State
 
 	return initialContext(contextTree, startArgs)
+}
+
+func (gui *Gui) loadCachedPullRequests() []*models.GithubPullRequest {
+	repoPath := gui.git.RepoPaths.RepoPath()
+	cachedPRs := gui.c.GetAppState().GithubPullRequests[repoPath]
+
+	return lo.Map(cachedPRs, func(cached config.CachedPullRequest, _ int) *models.GithubPullRequest {
+		return &models.GithubPullRequest{
+			HeadRefName: cached.HeadRefName,
+			Number:      cached.Number,
+			Title:       cached.Title,
+			State:       cached.State,
+			Url:         cached.Url,
+			HeadRepositoryOwner: models.GithubRepositoryOwner{
+				Login: cached.HeadRepositoryOwner,
+			},
+		}
+	})
 }
 
 func (gui *Gui) getViewBufferManagerForView(view *gocui.View) *tasks.ViewBufferManager {
