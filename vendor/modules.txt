@@ -1,10 +1,11 @@
 # dario.cat/mergo v1.0.1
 ## explicit; go 1.13
 dario.cat/mergo
-# github.com/adrg/xdg v0.4.0
-## explicit; go 1.14
+# github.com/adrg/xdg v0.5.3
+## explicit; go 1.19
 github.com/adrg/xdg
 github.com/adrg/xdg/internal/pathutil
+github.com/adrg/xdg/internal/userdirs
 # github.com/atotto/clipboard v0.1.4
 ## explicit
 github.com/atotto/clipboard
