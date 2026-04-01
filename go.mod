@@ -16,7 +16,7 @@ require (
 	github.com/gdamore/tcell/v2 v2.13.8
 	github.com/go-errors/errors v1.5.1
 	github.com/gookit/color v1.4.2
-	github.com/integrii/flaggy v1.4.0
+	github.com/integrii/flaggy v1.8.0
 	github.com/jesseduffield/generics v0.0.0-20250517122708-b0b4a53a6f5c
 	github.com/jesseduffield/gocui v0.3.1-0.20260327132312-944dab3bc980
 	github.com/jesseduffield/lazycore v0.0.0-20221012050358-03d2e40243c5
