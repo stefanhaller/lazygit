@@ -7,7 +7,7 @@ ignore ./test
 
 require (
 	dario.cat/mergo v1.0.1
-	github.com/adrg/xdg v0.4.0
+	github.com/adrg/xdg v0.5.3
 	github.com/atotto/clipboard v0.1.4
 	github.com/aybabtme/humanlog v0.4.1
 	github.com/cli/go-gh/v2 v2.13.0
