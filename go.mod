@@ -30,7 +30,7 @@ require (
 	github.com/sahilm/fuzzy v0.1.1
 	github.com/samber/lo v1.31.0
 	github.com/sanity-io/litter v1.5.8
-	github.com/sasha-s/go-deadlock v0.3.6
+	github.com/sasha-s/go-deadlock v0.3.9
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/afero v1.15.0
 	github.com/spkg/bom v1.0.1
