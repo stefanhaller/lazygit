@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 	"github.com/jesseduffield/lazygit/pkg/config"
 	"github.com/jesseduffield/lazygit/pkg/constants"
 	"github.com/jesseduffield/lazygit/pkg/gocui"
@@ -17,7 +17,7 @@ func LabelFromKey(key gocui.Key) string {
 	}
 
 	if key.KeyName() == gocui.KeyName(tcell.KeyRune) {
-		return string(key.Ch())
+		return key.Str()
 	}
 
 	value, ok := config.LabelByKey[key.KeyName()]

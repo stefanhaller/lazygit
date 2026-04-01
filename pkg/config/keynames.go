@@ -42,8 +42,6 @@ var LabelByKey = map[gocui.KeyName]string{
 	gocui.KeyAltEnter:       "<a-enter>",
 	gocui.KeyEsc:            "<esc>",       // <c-[>, <c-3>
 	gocui.KeyBackspace:      "<backspace>", // <c-h>
-	gocui.KeyCtrlSpace:      "<c-space>",   // <c-~>, <c-2>
-	gocui.KeyCtrlSlash:      "<c-/>",       // <c-_>
 	gocui.KeySpace:          "<space>",
 	gocui.KeyCtrlA:          "<c-a>",
 	gocui.KeyCtrlB:          "<c-b>",
@@ -68,9 +66,6 @@ var LabelByKey = map[gocui.KeyName]string{
 	gocui.KeyCtrlX:          "<c-x>",
 	gocui.KeyCtrlY:          "<c-y>",
 	gocui.KeyCtrlZ:          "<c-z>",
-	gocui.KeyCtrl4:          "<c-4>", // <c-\>
-	gocui.KeyCtrl5:          "<c-5>", // <c-]>
-	gocui.KeyCtrl6:          "<c-6>",
 	gocui.KeyCtrl8:          "<c-8>",
 	gocui.MouseWheelUp:      "mouse wheel up",
 	gocui.MouseWheelDown:    "mouse wheel down",
