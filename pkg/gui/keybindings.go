@@ -473,18 +473,12 @@ func (gui *Gui) resetKeybindings() error {
 	return nil
 }
 
-func (gui *Gui) wrappedHandler(f func() error) func(g *gocui.Gui, v *gocui.View) error {
-	return func(g *gocui.Gui, v *gocui.View) error {
-		return f()
-	}
-}
-
 func (gui *Gui) SetKeybinding(binding *types.Binding) error {
-	handler := func() error {
+	handler := func(g *gocui.Gui, v *gocui.View) error {
 		return gui.callKeybindingHandler(binding)
 	}
 
-	return gui.g.SetKeybinding(binding.ViewName, binding.Key, binding.Modifier, gui.wrappedHandler(handler))
+	return gui.g.SetKeybinding(binding.ViewName, binding.Key, binding.Modifier, handler)
 }
 
 func (gui *Gui) SetMouseKeybinding(binding *gocui.ViewMouseBinding) error {
