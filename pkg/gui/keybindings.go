@@ -484,18 +484,6 @@ func (gui *Gui) SetKeybinding(binding *types.Binding) error {
 		return gui.callKeybindingHandler(binding)
 	}
 
-	// TODO: move all mouse-ey stuff into new mouse approach
-	if gocui.IsMouseKey(binding.Key) {
-		handler = func() error {
-			// we ignore click events on views that aren't popup panels, when a popup panel is focused
-			if gui.helpers.Confirmation.IsPopupPanelFocused() && gui.currentViewName() != binding.ViewName {
-				return nil
-			}
-
-			return binding.Handler()
-		}
-	}
-
 	return gui.g.SetKeybinding(binding.ViewName, binding.Key, binding.Modifier, gui.wrappedHandler(handler))
 }
 
