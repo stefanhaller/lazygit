@@ -12,7 +12,7 @@ import (
 // NOTE: if you make changes to this table, be sure to update
 // docs/keybindings/Custom_Keybindings.md as well
 
-var LabelByKey = map[gocui.KeyName]string{
+var labelByKey = map[gocui.KeyName]string{
 	gocui.KeyF1:             "<f1>",
 	gocui.KeyF2:             "<f2>",
 	gocui.KeyF3:             "<f3>",
@@ -72,7 +72,7 @@ var LabelByKey = map[gocui.KeyName]string{
 	gocui.MouseWheelDown:    "mouse wheel down",
 }
 
-var KeyByLabel = lo.Invert(LabelByKey)
+var keyByLabel = lo.Invert(labelByKey)
 
 func LabelForKey(key gocui.Key) string {
 	if !key.IsSet() {
@@ -83,7 +83,7 @@ func LabelForKey(key gocui.Key) string {
 		return key.Str()
 	}
 
-	value, ok := LabelByKey[key.KeyName()]
+	value, ok := labelByKey[key.KeyName()]
 	if ok {
 		return value
 	}
@@ -98,7 +98,7 @@ func KeyFromLabel(label string) (gocui.Key, bool) {
 
 	runeCount := utf8.RuneCountInString(label)
 	if runeCount > 1 {
-		keyName, ok := KeyByLabel[strings.ToLower(label)]
+		keyName, ok := keyByLabel[strings.ToLower(label)]
 		if !ok {
 			return gocui.Key{}, false
 		}
