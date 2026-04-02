@@ -1440,7 +1440,8 @@
         },
         "confirmInEditor": {
           "type": "string",
-          "default": "\u003ca-enter\u003e"
+          "description": "\u003cm-enter\u003e on Mac",
+          "default": "\u003cc-enter\u003e"
         },
         "confirmInEditor-alt": {
           "type": "string",

@@ -637,7 +637,9 @@ keybinding:
     confirm: <enter>
     confirmMenu: <enter>
     confirmSuggestion: <enter>
-    confirmInEditor: <a-enter>
+
+    # <m-enter> on Mac
+    confirmInEditor: <c-enter>
     confirmInEditor-alt: <c-s>
     remove: d
     new: "n"

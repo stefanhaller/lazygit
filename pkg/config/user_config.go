@@ -461,7 +461,7 @@ type KeybindingUniversalConfig struct {
 	Confirm                           string   `yaml:"confirm"`
 	ConfirmMenu                       string   `yaml:"confirmMenu"`
 	ConfirmSuggestion                 string   `yaml:"confirmSuggestion"`
-	ConfirmInEditor                   string   `yaml:"confirmInEditor"`
+	ConfirmInEditor                   string   `yaml:"confirmInEditor"` // <m-enter> on Mac
 	ConfirmInEditorAlt                string   `yaml:"confirmInEditor-alt"`
 	Remove                            string   `yaml:"remove"`
 	New                               string   `yaml:"new"`
@@ -766,6 +766,12 @@ type IconProperties struct {
 }
 
 func GetDefaultConfig() *UserConfig {
+	// This is only for tests; we don't want to use the test runner's host platform in that case,
+	// but always use the fallback bindings
+	return GetDefaultConfigForPlatform("")
+}
+
+func GetDefaultConfigForPlatform(platform string) *UserConfig {
 	return &UserConfig{
 		Gui: GuiConfig{
 			ScrollHeight:             2,
@@ -934,7 +940,7 @@ func GetDefaultConfig() *UserConfig {
 				Confirm:                           "<enter>",
 				ConfirmMenu:                       "<enter>",
 				ConfirmSuggestion:                 "<enter>",
-				ConfirmInEditor:                   "<a-enter>",
+				ConfirmInEditor:                   platformKeyBinding(platform, map[string]string{"darwin": "<m-enter>"}, "<c-enter>"),
 				ConfirmInEditorAlt:                "<c-s>",
 				Remove:                            "d",
 				New:                               "n",
@@ -1080,4 +1086,11 @@ func GetDefaultConfig() *UserConfig {
 			},
 		},
 	}
+}
+
+func platformKeyBinding(platform string, bindingByPlatform map[string]string, fallback string) string {
+	if binding, ok := bindingByPlatform[platform]; ok {
+		return binding
+	}
+	return fallback
 }
