@@ -4,6 +4,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/gdamore/tcell/v3"
 	"github.com/jesseduffield/lazygit/pkg/gocui"
 	"github.com/samber/lo"
 )
@@ -72,6 +73,23 @@ var LabelByKey = map[gocui.KeyName]string{
 }
 
 var KeyByLabel = lo.Invert(LabelByKey)
+
+func LabelForKey(key gocui.Key) string {
+	if !key.IsSet() {
+		return ""
+	}
+
+	if key.KeyName() == gocui.KeyName(tcell.KeyRune) {
+		return key.Str()
+	}
+
+	value, ok := LabelByKey[key.KeyName()]
+	if ok {
+		return value
+	}
+
+	return "unknown"
+}
 
 func KeyFromLabel(label string) (gocui.Key, bool) {
 	if label == "" || label == "<disabled>" {

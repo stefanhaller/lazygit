@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/jesseduffield/lazygit/pkg/gui/keybindings"
+	"github.com/jesseduffield/lazygit/pkg/config"
 	"github.com/jesseduffield/lazygit/pkg/gui/style"
 	"github.com/jesseduffield/lazygit/pkg/gui/types"
 	"github.com/jesseduffield/lazygit/pkg/i18n"
@@ -73,7 +73,7 @@ func NewMenuViewModel(c *ContextCommon) *MenuViewModel {
 		func() []*types.MenuItem { return self.menuItems },
 		func(item *types.MenuItem) []string {
 			if filterKeybindings {
-				return []string{keybindings.LabelFromKey(item.Key)}
+				return []string{config.LabelForKey(item.Key)}
 			}
 
 			return item.LabelColumns
@@ -139,7 +139,7 @@ func (self *MenuViewModel) GetDisplayStrings(_ int, _ int) [][]string {
 
 		keyLabel := ""
 		if item.Key.IsSet() {
-			keyLabel = style.FgCyan.Sprint(keybindings.LabelFromKey(item.Key))
+			keyLabel = style.FgCyan.Sprint(config.LabelForKey(item.Key))
 		}
 
 		checkMark := ""
