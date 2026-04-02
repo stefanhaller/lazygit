@@ -332,8 +332,8 @@ _图例：`<c-b>` 意味着ctrl+b, `<a-b>意味着Alt+b, `B` 意味着shift+b_
 
 | Key | Action | Info |
 |-----|--------|-------------|
-| `` mouse wheel down (fn+up) `` | 向下滚动 |  |
-| `` mouse wheel up (fn+down) `` | 向上滚动 |  |
+| `` <mouse wheel down> (fn+up) `` | 向下滚动 |  |
+| `` <mouse wheel up> (fn+down) `` | 向上滚动 |  |
 | `` <tab> `` | 切换到其他面板 | 切换到其他视图（已暂存/未暂存的变更） |
 | `` <esc> `` | 退出回到侧边面板 |  |
 | `` / `` | 开始搜索 |  |

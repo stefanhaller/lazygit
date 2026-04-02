@@ -229,8 +229,8 @@ _Legend: `<c-b>` means ctrl+b, `<a-b>` means alt+b, `B` means shift+b_
 
 | Key | Action | Info |
 |-----|--------|-------------|
-| `` mouse wheel down (fn+up) `` | Scroll omlaag |  |
-| `` mouse wheel up (fn+down) `` | Scroll omhoog |  |
+| `` <mouse wheel down> (fn+up) `` | Scroll omlaag |  |
+| `` <mouse wheel up> (fn+down) `` | Scroll omhoog |  |
 | `` <tab> `` | Ga naar een ander paneel | Switch to other view (staged/unstaged changes). |
 | `` <esc> `` | Exit back to side panel |  |
 | `` / `` | Start met zoeken |  |

@@ -221,8 +221,8 @@ _Legend: `<c-b>` means ctrl+b, `<a-b>` means alt+b, `B` means shift+b_
 
 | Key | Action | Info |
 |-----|--------|-------------|
-| `` mouse wheel down (fn+up) `` | Scroll down |  |
-| `` mouse wheel up (fn+down) `` | Scroll up |  |
+| `` <mouse wheel down> (fn+up) `` | Scroll down |  |
+| `` <mouse wheel up> (fn+down) `` | Scroll up |  |
 | `` <tab> `` | Switch view | Switch to other view (staged/unstaged changes). |
 | `` <esc> `` | Exit back to side panel |  |
 | `` / `` | Search the current view by text |  |

@@ -34,7 +34,7 @@ func (self *GuiDriver) PressKey(keyStr string) {
 	}
 
 	self.gui.g.ReplayedEvents.Keys <- gocui.NewTcellKeyEventWrapper(
-		tcell.NewEventKey(tcell.Key(key.KeyName()), key.Str(), tcell.ModNone),
+		tcell.NewEventKey(tcell.Key(key.KeyName()), key.Str(), tcell.ModMask(key.Mod())),
 		0,
 	)
 

@@ -160,8 +160,8 @@ _Legend: `<c-b>` means ctrl+b, `<a-b>` means alt+b, `B` means shift+b_
 
 | Key | Action | Info |
 |-----|--------|-------------|
-| `` mouse wheel down (fn+up) `` | 아래로 스크롤 |  |
-| `` mouse wheel up (fn+down) `` | 위로 스크롤 |  |
+| `` <mouse wheel down> (fn+up) `` | 아래로 스크롤 |  |
+| `` <mouse wheel up> (fn+down) `` | 위로 스크롤 |  |
 | `` <tab> `` | 패널 전환 | Switch to other view (staged/unstaged changes). |
 | `` <esc> `` | Exit back to side panel |  |
 | `` / `` | 검색 시작 |  |

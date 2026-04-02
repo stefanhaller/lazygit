@@ -80,8 +80,8 @@ _說明：`<c-b>` 表示 Ctrl＋B、`<a-b>` 表示 Alt＋B，`B`表示 Shift＋B
 
 | Key | Action | Info |
 |-----|--------|-------------|
-| `` mouse wheel down (fn+up) `` | 向下捲動 |  |
-| `` mouse wheel up (fn+down) `` | 向上捲動 |  |
+| `` <mouse wheel down> (fn+up) `` | 向下捲動 |  |
+| `` <mouse wheel up> (fn+down) `` | 向上捲動 |  |
 | `` <tab> `` | 切換至另一個面板 (已預存/未預存更改) | Switch to other view (staged/unstaged changes). |
 | `` <esc> `` | Exit back to side panel |  |
 | `` / `` | 搜尋 |  |

@@ -104,8 +104,8 @@ _Связки клавиш_
 
 | Key | Action | Info |
 |-----|--------|-------------|
-| `` mouse wheel down (fn+up) `` | Прокрутить вниз |  |
-| `` mouse wheel up (fn+down) `` | Прокрутить вверх |  |
+| `` <mouse wheel down> (fn+up) `` | Прокрутить вниз |  |
+| `` <mouse wheel up> (fn+down) `` | Прокрутить вверх |  |
 | `` <tab> `` | Переключиться на другую панель (проиндексированные/непроиндексированные изменения) | Switch to other view (staged/unstaged changes). |
 | `` <esc> `` | Exit back to side panel |  |
 | `` / `` | Найти |  |

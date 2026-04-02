@@ -179,8 +179,8 @@ _Legenda: `<c-b>` oznacza ctrl+b, `<a-b>` oznacza alt+b, `B` oznacza shift+b_
 
 | Key | Action | Info |
 |-----|--------|-------------|
-| `` mouse wheel down (fn+up) `` | Przewiń w dół |  |
-| `` mouse wheel up (fn+down) `` | Przewiń w górę |  |
+| `` <mouse wheel down> (fn+up) `` | Przewiń w dół |  |
+| `` <mouse wheel up> (fn+down) `` | Przewiń w górę |  |
 | `` <tab> `` | Przełącz widok | Przełącz na inny widok (zatwierdzone/niezatwierdzone zmiany). |
 | `` <esc> `` | Exit back to side panel |  |
 | `` / `` | Szukaj w bieżącym widoku po tekście |  |

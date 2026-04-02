@@ -304,8 +304,8 @@ _凡例：`＜c-b＞` はctrl+b、`＜a-b＞` はalt+b、`B` はshift+bを意味
 
 | Key | Action | Info |
 |-----|--------|-------------|
-| `` mouse wheel down (fn+up) `` | 下にスクロール |  |
-| `` mouse wheel up (fn+down) `` | 上にスクロール |  |
+| `` <mouse wheel down> (fn+up) `` | 下にスクロール |  |
+| `` <mouse wheel up> (fn+down) `` | 上にスクロール |  |
 | `` <tab> `` | ビューを切り替え | 他のビュー（ステージされた変更/ステージされていない変更）に切り替えます。 |
 | `` <esc> `` | サイドパネルに戻る |  |
 | `` / `` | 現在のビューをテキストで検索 |  |
