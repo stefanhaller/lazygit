@@ -1,6 +1,7 @@
 package config
 
 import (
+	"log"
 	"strings"
 	"unicode/utf8"
 
@@ -111,4 +112,13 @@ func KeyFromLabel(label string) (gocui.Key, bool) {
 func isValidKeybindingKey(key string) bool {
 	_, ok := KeyFromLabel(key)
 	return ok
+}
+
+func GetValidatedKeyBindingKey(label string) gocui.Key {
+	key, ok := KeyFromLabel(label)
+	if !ok {
+		log.Fatalf("Unrecognized key %s, this should have been caught by user config validation", label)
+	}
+
+	return key
 }

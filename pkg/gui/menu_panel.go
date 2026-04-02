@@ -3,8 +3,8 @@ package gui
 import (
 	"fmt"
 
+	"github.com/jesseduffield/lazygit/pkg/config"
 	"github.com/jesseduffield/lazygit/pkg/gocui"
-	"github.com/jesseduffield/lazygit/pkg/gui/keybindings"
 	"github.com/jesseduffield/lazygit/pkg/gui/types"
 	"github.com/jesseduffield/lazygit/pkg/theme"
 	"github.com/samber/lo"
@@ -28,10 +28,10 @@ func (gui *Gui) createMenu(opts types.CreateMenuOptions) error {
 	maxColumnSize := 1
 
 	essentialKeys := []gocui.Key{
-		keybindings.GetKey(gui.c.UserConfig().Keybinding.Universal.ConfirmMenu),
-		keybindings.GetKey(gui.c.UserConfig().Keybinding.Universal.Return),
-		keybindings.GetKey(gui.c.UserConfig().Keybinding.Universal.PrevItem),
-		keybindings.GetKey(gui.c.UserConfig().Keybinding.Universal.NextItem),
+		config.GetValidatedKeyBindingKey(gui.c.UserConfig().Keybinding.Universal.ConfirmMenu),
+		config.GetValidatedKeyBindingKey(gui.c.UserConfig().Keybinding.Universal.Return),
+		config.GetValidatedKeyBindingKey(gui.c.UserConfig().Keybinding.Universal.PrevItem),
+		config.GetValidatedKeyBindingKey(gui.c.UserConfig().Keybinding.Universal.NextItem),
 	}
 
 	for _, item := range opts.Items {

@@ -4,10 +4,10 @@ import (
 	"errors"
 	"log"
 
+	"github.com/jesseduffield/lazygit/pkg/config"
 	"github.com/jesseduffield/lazygit/pkg/gocui"
 	"github.com/jesseduffield/lazygit/pkg/gui/context"
 	"github.com/jesseduffield/lazygit/pkg/gui/controllers/helpers"
-	"github.com/jesseduffield/lazygit/pkg/gui/keybindings"
 	"github.com/jesseduffield/lazygit/pkg/gui/types"
 )
 
@@ -61,7 +61,7 @@ func (gui *Gui) GetCheatsheetKeybindings() []*types.Binding {
 }
 
 func (gui *Gui) keybindingOpts() types.KeybindingsOpts {
-	config := gui.c.UserConfig().Keybinding
+	keybindingConfig := gui.c.UserConfig().Keybinding
 
 	guards := types.KeybindingGuards{
 		OutsideFilterMode: gui.outsideFilterMode,
@@ -69,8 +69,8 @@ func (gui *Gui) keybindingOpts() types.KeybindingsOpts {
 	}
 
 	return types.KeybindingsOpts{
-		GetKey: keybindings.GetKey,
-		Config: config,
+		GetKey: config.GetValidatedKeyBindingKey,
+		Config: keybindingConfig,
 		Guards: guards,
 	}
 }

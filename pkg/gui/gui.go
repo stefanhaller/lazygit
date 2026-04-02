@@ -26,7 +26,6 @@ import (
 	"github.com/jesseduffield/lazygit/pkg/gocui"
 	"github.com/jesseduffield/lazygit/pkg/gui/context"
 	"github.com/jesseduffield/lazygit/pkg/gui/controllers/helpers"
-	"github.com/jesseduffield/lazygit/pkg/gui/keybindings"
 	"github.com/jesseduffield/lazygit/pkg/gui/modes/cherrypicking"
 	"github.com/jesseduffield/lazygit/pkg/gui/modes/diffing"
 	"github.com/jesseduffield/lazygit/pkg/gui/modes/filtering"
@@ -471,9 +470,9 @@ func (gui *Gui) onUserConfigLoaded() error {
 	gui.setColorScheme()
 	gui.configureViewProperties()
 
-	gui.g.SearchEscapeKey = keybindings.GetKey(userConfig.Keybinding.Universal.Return)
-	gui.g.NextSearchMatchKey = keybindings.GetKey(userConfig.Keybinding.Universal.NextMatch)
-	gui.g.PrevSearchMatchKey = keybindings.GetKey(userConfig.Keybinding.Universal.PrevMatch)
+	gui.g.SearchEscapeKey = config.GetValidatedKeyBindingKey(userConfig.Keybinding.Universal.Return)
+	gui.g.NextSearchMatchKey = config.GetValidatedKeyBindingKey(userConfig.Keybinding.Universal.NextMatch)
+	gui.g.PrevSearchMatchKey = config.GetValidatedKeyBindingKey(userConfig.Keybinding.Universal.PrevMatch)
 
 	gui.g.ShowListFooter = userConfig.Gui.ShowListFooter
 
