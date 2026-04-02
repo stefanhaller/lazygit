@@ -2,12 +2,9 @@ package keybindings
 
 import (
 	"log"
-	"strings"
-	"unicode/utf8"
 
 	"github.com/gdamore/tcell/v3"
 	"github.com/jesseduffield/lazygit/pkg/config"
-	"github.com/jesseduffield/lazygit/pkg/constants"
 	"github.com/jesseduffield/lazygit/pkg/gocui"
 )
 
@@ -28,23 +25,11 @@ func LabelFromKey(key gocui.Key) string {
 	return "unknown"
 }
 
-func GetKey(key string) gocui.Key {
-	if key == "<disabled>" {
-		return gocui.Key{}
+func GetKey(label string) gocui.Key {
+	key, ok := config.KeyFromLabel(label)
+	if !ok {
+		log.Fatalf("Unrecognized key %s, this should have been caught by user config validation", label)
 	}
 
-	runeCount := utf8.RuneCountInString(key)
-	if runeCount > 1 {
-		keyName, ok := config.KeyByLabel[strings.ToLower(key)]
-		if !ok {
-			log.Fatalf("Unrecognized key %s for keybinding. For permitted values see %s", strings.ToLower(key), constants.Links.Docs.CustomKeybindings)
-		}
-		return gocui.NewKeyName(keyName)
-	}
-
-	if runeCount == 1 {
-		return gocui.NewKeyRune([]rune(key)[0])
-	}
-
-	return gocui.Key{}
+	return key
 }

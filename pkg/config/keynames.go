@@ -73,16 +73,24 @@ var LabelByKey = map[gocui.KeyName]string{
 
 var KeyByLabel = lo.Invert(LabelByKey)
 
-func isValidKeybindingKey(key string) bool {
-	runeCount := utf8.RuneCountInString(key)
-	if key == "<disabled>" {
-		return true
+func KeyFromLabel(label string) (gocui.Key, bool) {
+	if label == "" || label == "<disabled>" {
+		return gocui.Key{}, true
 	}
 
+	runeCount := utf8.RuneCountInString(label)
 	if runeCount > 1 {
-		_, ok := KeyByLabel[strings.ToLower(key)]
-		return ok
+		keyName, ok := KeyByLabel[strings.ToLower(label)]
+		if !ok {
+			return gocui.Key{}, false
+		}
+		return gocui.NewKeyName(keyName), true
 	}
 
-	return true
+	return gocui.NewKeyRune([]rune(label)[0]), true
+}
+
+func isValidKeybindingKey(key string) bool {
+	_, ok := KeyFromLabel(key)
+	return ok
 }
