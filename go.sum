@@ -50,8 +50,6 @@ github.com/invopop/jsonschema v0.10.0 h1:c1ktzNLBun3LyQQhyty5WE3lulbOdIIyOVlkmDL
 github.com/invopop/jsonschema v0.10.0/go.mod h1:ffZ5Km5SWWRAIN6wbDXItl95euhFz2uON45H2qjYt+0=
 github.com/jesseduffield/generics v0.0.0-20250517122708-b0b4a53a6f5c h1:tC2PaiisXAC5sOjDPfMArSnbswDObtCssx+xn28edX4=
 github.com/jesseduffield/generics v0.0.0-20250517122708-b0b4a53a6f5c/go.mod h1:F2fEBk0ddf6ixrBrJjY7phfQ3hL9rXG0uSjvwYe50bE=
-github.com/jesseduffield/gocui v0.3.1-0.20260327132312-944dab3bc980 h1:LEZwOrBm9S+4lRlXpoz+RSzSvhOVE+6v/Rk+A7Kg00Q=
-github.com/jesseduffield/gocui v0.3.1-0.20260327132312-944dab3bc980/go.mod h1:lQCd2TvvNXVKFBowy4A7xxZbUp+1KEiGs4j0Q5Zt9gQ=
 github.com/jesseduffield/lazycore v0.0.0-20221012050358-03d2e40243c5 h1:CDuQmfOjAtb1Gms6a1p5L2P8RhbLUq5t8aL7PiQd2uY=
 github.com/jesseduffield/lazycore v0.0.0-20221012050358-03d2e40243c5/go.mod h1:qxN4mHOAyeIDLP7IK7defgPClM/z1Kze8VVQiaEjzsQ=
 github.com/josharian/intern v1.0.0/go.mod h1:5DoeVV0s6jJacbCEi61lwdGj/aVlrQvzHFFd8Hwg//Y=

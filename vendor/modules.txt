@@ -99,9 +99,6 @@ github.com/integrii/flaggy
 github.com/jesseduffield/generics/maps
 github.com/jesseduffield/generics/orderedset
 github.com/jesseduffield/generics/set
-# github.com/jesseduffield/gocui v0.3.1-0.20260327132312-944dab3bc980
-## explicit; go 1.25
-github.com/jesseduffield/gocui
 # github.com/jesseduffield/lazycore v0.0.0-20221012050358-03d2e40243c5
 ## explicit; go 1.18
 github.com/jesseduffield/lazycore/pkg/boxlayout
