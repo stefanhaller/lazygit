@@ -164,9 +164,6 @@ type View struct {
 	// Overlaps describes which edges are overlapping with another view's edges
 	Overlaps byte
 
-	// If HasLoader is true, the message will be appended with a spinning loader animation
-	HasLoader bool
-
 	// ParentView is the view which catches events bubbled up from the given view if there's no matching handler
 	ParentView *View
 
@@ -1315,9 +1312,6 @@ func (v *View) refreshViewLinesIfNeeded() {
 		maxX := v.InnerWidth()
 		lineIdx := 0
 		lines := v.lines
-		if v.HasLoader {
-			lines = v.loaderLines()
-		}
 		for i, line := range lines {
 			wrap := 0
 			if v.Wrap {
@@ -1336,9 +1330,7 @@ func (v *View) refreshViewLinesIfNeeded() {
 				lineIdx++
 			}
 		}
-		if !v.HasLoader {
-			v.tainted = false
-		}
+		v.tainted = false
 	}
 }
 

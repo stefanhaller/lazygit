@@ -1609,13 +1609,6 @@ func (g *Gui) StartTicking(ctx context.Context) {
 				if g.suspended {
 					continue outer
 				}
-
-				for _, view := range g.Views() {
-					if view.HasLoader {
-						g.UpdateAsync(func(g *Gui) error { return nil })
-						continue outer
-					}
-				}
 				return
 			case <-ctx.Done():
 				return
