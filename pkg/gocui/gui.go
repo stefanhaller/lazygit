@@ -5,7 +5,6 @@
 package gocui
 
 import (
-	"context"
 	standardErrors "errors"
 	"runtime"
 	"strings"
@@ -95,10 +94,6 @@ type ViewMouseBindingOpts struct {
 }
 
 type GuiMutexes struct {
-	// tickingMutex ensures we don't have two loops ticking. The point of 'ticking'
-	// is to refresh the gui rapidly so that loader characters can be animated.
-	tickingMutex sync.Mutex
-
 	ViewsMutex sync.Mutex
 }
 
@@ -1593,30 +1588,6 @@ func (g *Gui) onFocus(ev *GocuiEvent) error {
 	}
 
 	return nil
-}
-
-func (g *Gui) StartTicking(ctx context.Context) {
-	go func() {
-		g.Mutexes.tickingMutex.Lock()
-		defer g.Mutexes.tickingMutex.Unlock()
-		ticker := time.NewTicker(time.Millisecond * 50)
-		defer ticker.Stop()
-	outer:
-		for {
-			select {
-			case <-ticker.C:
-				// I'm okay with having a data race here: there's no harm in letting one of these updates through
-				if g.suspended {
-					continue outer
-				}
-				return
-			case <-ctx.Done():
-				return
-			case <-g.stop:
-				return
-			}
-		}
-	}()
 }
 
 func (g *Gui) Suspend() error {
