@@ -151,6 +151,7 @@ func TestParseOneColours(t *testing.T) {
 }
 
 func parseEscRunes(t *testing.T, ei *escapeInterpreter, runes string) {
+	t.Helper()
 	for _, b := range []byte(runes) {
 		isEscape, err := ei.parseOne([]byte{b})
 		assert.Equal(t, true, isEscape)

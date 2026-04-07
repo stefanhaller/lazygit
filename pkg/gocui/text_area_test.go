@@ -1008,7 +1008,7 @@ func Test_AutoWrapContent(t *testing.T) {
 	}
 }
 
-var testContent string = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+var testContent = `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 Quisque vehicula mi at elit pellentesque, eu pulvinar ligula molestie.
 In vitae orci vitae elit fermentum lobortis sed in nisi.
 Nam non odio nisi.

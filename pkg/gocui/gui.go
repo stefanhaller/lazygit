@@ -912,9 +912,9 @@ func calcScrollbarRune(
 ) rune {
 	if showScrollbar && (position >= scrollbarStart && position <= scrollbarEnd) {
 		return '▐'
-	} else {
-		return runeV
 	}
+
+	return runeV
 }
 
 func calcRealScrollbarStartEnd(v *View) (bool, int, int) {
