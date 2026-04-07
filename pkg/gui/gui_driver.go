@@ -37,7 +37,7 @@ func (self *GuiDriver) PressKey(keyStr string) {
 	case rune:
 		r = v
 		tcellKey = tcell.KeyRune
-	case gocui.Key:
+	case gocui.KeyName:
 		tcellKey = tcell.Key(v)
 	}
 

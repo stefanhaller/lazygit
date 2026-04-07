@@ -273,8 +273,8 @@ func (self *app) renderTests() {
 	}
 }
 
-func (self *app) wrapEditor(f func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool) func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
-	return func(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
+func (self *app) wrapEditor(f func(v *gocui.View, key gocui.KeyName, ch rune, mod gocui.Modifier) bool) func(v *gocui.View, key gocui.KeyName, ch rune, mod gocui.Modifier) bool {
+	return func(v *gocui.View, key gocui.KeyName, ch rune, mod gocui.Modifier) bool {
 		matched := f(v, key, ch, mod)
 		if matched {
 			self.filterWithString(v.TextArea.GetContent())

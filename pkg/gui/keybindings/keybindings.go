@@ -22,7 +22,7 @@ func LabelFromKey(key types.Key) string {
 	switch key := key.(type) {
 	case rune:
 		keyInt = int(key)
-	case gocui.Key:
+	case gocui.KeyName:
 		value, ok := config.LabelByKey[key]
 		if ok {
 			return value

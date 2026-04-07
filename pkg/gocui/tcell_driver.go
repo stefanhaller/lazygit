@@ -162,7 +162,7 @@ type gocuiEventType uint8
 type GocuiEvent struct {
 	Type    gocuiEventType
 	Mod     Modifier
-	Key     Key
+	Key     KeyName
 	Ch      rune
 	Width   int
 	Height  int
@@ -329,7 +329,7 @@ func (g *Gui) pollEvent() GocuiEvent {
 
 		return GocuiEvent{
 			Type: eventKey,
-			Key:  Key(k),
+			Key:  KeyName(k),
 			Ch:   ch,
 			Mod:  Modifier(mod),
 		}

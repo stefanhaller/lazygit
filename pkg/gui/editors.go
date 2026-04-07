@@ -4,7 +4,7 @@ import (
 	"github.com/jesseduffield/lazygit/pkg/gocui"
 )
 
-func (gui *Gui) handleEditorKeypress(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier, allowMultiline bool) bool {
+func (gui *Gui) handleEditorKeypress(v *gocui.View, key gocui.KeyName, ch rune, mod gocui.Modifier, allowMultiline bool) bool {
 	if key == gocui.KeyEnter && allowMultiline {
 		v.TextArea.TypeCharacter("\n")
 		v.RenderTextArea()
@@ -16,20 +16,20 @@ func (gui *Gui) handleEditorKeypress(v *gocui.View, key gocui.Key, ch rune, mod 
 
 // we've just copy+pasted the editor from gocui to here so that we can also re-
 // render the commit message length on each keypress
-func (gui *Gui) commitMessageEditor(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
+func (gui *Gui) commitMessageEditor(v *gocui.View, key gocui.KeyName, ch rune, mod gocui.Modifier) bool {
 	matched := gui.handleEditorKeypress(v, key, ch, mod, false)
 	v.RenderTextArea()
 	gui.c.Contexts().CommitMessage.RenderSubtitle()
 	return matched
 }
 
-func (gui *Gui) commitDescriptionEditor(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
+func (gui *Gui) commitDescriptionEditor(v *gocui.View, key gocui.KeyName, ch rune, mod gocui.Modifier) bool {
 	matched := gui.handleEditorKeypress(v, key, ch, mod, true)
 	v.RenderTextArea()
 	return matched
 }
 
-func (gui *Gui) promptEditor(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
+func (gui *Gui) promptEditor(v *gocui.View, key gocui.KeyName, ch rune, mod gocui.Modifier) bool {
 	matched := gui.handleEditorKeypress(v, key, ch, mod, false)
 
 	v.RenderTextArea()
@@ -46,7 +46,7 @@ func (gui *Gui) promptEditor(v *gocui.View, key gocui.Key, ch rune, mod gocui.Mo
 	return matched
 }
 
-func (gui *Gui) searchEditor(v *gocui.View, key gocui.Key, ch rune, mod gocui.Modifier) bool {
+func (gui *Gui) searchEditor(v *gocui.View, key gocui.KeyName, ch rune, mod gocui.Modifier) bool {
 	matched := gui.handleEditorKeypress(v, key, ch, mod, false)
 	v.RenderTextArea()
 

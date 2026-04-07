@@ -11,7 +11,7 @@ import (
 // NOTE: if you make changes to this table, be sure to update
 // docs/keybindings/Custom_Keybindings.md as well
 
-var LabelByKey = map[gocui.Key]string{
+var LabelByKey = map[gocui.KeyName]string{
 	gocui.KeyF1:             "<f1>",
 	gocui.KeyF2:             "<f2>",
 	gocui.KeyF3:             "<f3>",
