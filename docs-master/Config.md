@@ -639,6 +639,9 @@ keybinding:
 
     # <a-backspace> on Mac
     backspaceWord: <c-backspace>
+
+    # <a-delete> on Mac
+    forwardDeleteWord: <c-delete>
     optionMenu: <disabled>
     optionMenu-alt1: '?'
     select: <space>

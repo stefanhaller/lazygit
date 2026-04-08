@@ -454,9 +454,10 @@ type KeybindingUniversalConfig struct {
 	NextMatch                         string   `yaml:"nextMatch"`
 	PrevMatch                         string   `yaml:"prevMatch"`
 	StartSearch                       string   `yaml:"startSearch"`
-	MoveWordLeft                      string   `yaml:"moveWordLeft"`  // <a-left> on Mac
-	MoveWordRight                     string   `yaml:"moveWordRight"` // <a-right> on Mac
-	BackspaceWord                     string   `yaml:"backspaceWord"` // <a-backspace> on Mac
+	MoveWordLeft                      string   `yaml:"moveWordLeft"`      // <a-left> on Mac
+	MoveWordRight                     string   `yaml:"moveWordRight"`     // <a-right> on Mac
+	BackspaceWord                     string   `yaml:"backspaceWord"`     // <a-backspace> on Mac
+	ForwardDeleteWord                 string   `yaml:"forwardDeleteWord"` // <a-delete> on Mac
 	OptionMenu                        string   `yaml:"optionMenu"`
 	OptionMenuAlt1                    string   `yaml:"optionMenu-alt1"`
 	Select                            string   `yaml:"select"`
@@ -939,6 +940,7 @@ func GetDefaultConfigForPlatform(platform string) *UserConfig {
 				MoveWordLeft:                      platformKeyBinding(platform, map[string]string{"darwin": "<a-left>"}, "<c-left>"),
 				MoveWordRight:                     platformKeyBinding(platform, map[string]string{"darwin": "<a-right>"}, "<c-right>"),
 				BackspaceWord:                     platformKeyBinding(platform, map[string]string{"darwin": "<a-backspace>"}, "<c-backspace>"),
+				ForwardDeleteWord:                 platformKeyBinding(platform, map[string]string{"darwin": "<a-delete>"}, "<c-delete>"),
 				OptionMenu:                        "<disabled>",
 				OptionMenuAlt1:                    "?",
 				Select:                            "<space>",

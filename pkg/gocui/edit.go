@@ -23,9 +23,10 @@ func (f EditorFunc) Edit(v *View, key Key) bool {
 var DefaultEditor Editor = EditorFunc(SimpleEditor)
 
 var (
-	moveWordLeftKeybinding  = NewKey(KeyArrowLeft, "", ModCtrl)
-	moveWordRightKeybinding = NewKey(KeyArrowRight, "", ModCtrl)
-	backspaceWordKeybinding = NewKey(KeyBackspace, "", ModCtrl)
+	moveWordLeftKeybinding      = NewKey(KeyArrowLeft, "", ModCtrl)
+	moveWordRightKeybinding     = NewKey(KeyArrowRight, "", ModCtrl)
+	backspaceWordKeybinding     = NewKey(KeyBackspace, "", ModCtrl)
+	forwardDeleteWordKeybinding = NewKey(KeyDelete, "", ModCtrl)
 )
 
 // SimpleEditor is used as the default gocui editor.
@@ -34,6 +35,9 @@ func SimpleEditor(v *View, key Key) bool {
 	case key.Equals(backspaceWordKeybinding),
 		key.Equals(NewKeyStrMod("w", ModCtrl)):
 		v.TextArea.BackSpaceWord()
+	case key.Equals(forwardDeleteWordKeybinding),
+		key.Equals(NewKeyStrMod("d", ModAlt)):
+		v.TextArea.ForwardDeleteWord()
 	case key.Equals(NewKeyName(KeyBackspace)):
 		v.TextArea.BackSpaceChar()
 	case key.Equals(NewKeyStrMod("d", ModCtrl)),

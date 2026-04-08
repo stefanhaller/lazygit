@@ -1425,6 +1425,11 @@
           "description": "\u003ca-backspace\u003e on Mac",
           "default": "\u003cc-backspace\u003e"
         },
+        "forwardDeleteWord": {
+          "type": "string",
+          "description": "\u003ca-delete\u003e on Mac",
+          "default": "\u003cc-delete\u003e"
+        },
         "optionMenu": {
           "type": "string",
           "default": "\u003cdisabled\u003e"

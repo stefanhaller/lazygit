@@ -478,6 +478,7 @@ func (gui *Gui) onUserConfigLoaded() error {
 		config.GetValidatedKeyBindingKey(userConfig.Keybinding.Universal.MoveWordLeft),
 		config.GetValidatedKeyBindingKey(userConfig.Keybinding.Universal.MoveWordRight),
 		config.GetValidatedKeyBindingKey(userConfig.Keybinding.Universal.BackspaceWord),
+		config.GetValidatedKeyBindingKey(userConfig.Keybinding.Universal.ForwardDeleteWord),
 	)
 
 	gui.g.ShowListFooter = userConfig.Gui.ShowListFooter
