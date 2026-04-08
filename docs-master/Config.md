@@ -630,6 +630,15 @@ keybinding:
     nextMatch: "n"
     prevMatch: "N"
     startSearch: /
+
+    # <a-left> on Mac
+    moveWordLeft: <c-left>
+
+    # <a-right> on Mac
+    moveWordRight: <c-right>
+
+    # <a-backspace> on Mac
+    backspaceWord: <c-backspace>
     optionMenu: <disabled>
     optionMenu-alt1: '?'
     select: <space>

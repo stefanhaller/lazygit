@@ -1410,6 +1410,21 @@
           "type": "string",
           "default": "/"
         },
+        "moveWordLeft": {
+          "type": "string",
+          "description": "\u003ca-left\u003e on Mac",
+          "default": "\u003cc-left\u003e"
+        },
+        "moveWordRight": {
+          "type": "string",
+          "description": "\u003ca-right\u003e on Mac",
+          "default": "\u003cc-right\u003e"
+        },
+        "backspaceWord": {
+          "type": "string",
+          "description": "\u003ca-backspace\u003e on Mac",
+          "default": "\u003cc-backspace\u003e"
+        },
         "optionMenu": {
           "type": "string",
           "default": "\u003cdisabled\u003e"

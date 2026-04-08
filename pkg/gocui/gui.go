@@ -1629,3 +1629,9 @@ func (g *Gui) Snapshot() string {
 
 	return builder.String()
 }
+
+func (g *Gui) SetEditKeybindings(moveWordLeft, moveWordRight, backspaceWord Key) {
+	moveWordLeftKeybinding = moveWordLeft
+	moveWordRightKeybinding = moveWordRight
+	backspaceWordKeybinding = backspaceWord
+}
