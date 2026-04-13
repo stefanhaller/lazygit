@@ -8,13 +8,13 @@ Lazygit's vision is to be the most enjoyable UI for git.
 
 There are seven (sometimes contradictory) design principles we follow:
 
-- Discoverability
-- Simplicity
-- Safety
-- Power
-- Speed
-- Conformity with git
-- Think of the codebase
+- [Discoverability](#discoverability)
+- [Simplicity](#simplicity)
+- [Safety](#safety)
+- [Power](#power)
+- [Speed](#speed)
+- [Conformity with git](#conformity-with-git)
+- [Think of the codebase](#think-of-the-codebase)
 
 ### Discoverability
 
