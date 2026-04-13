@@ -55,7 +55,7 @@ It's easy to screw things up in git so Lazygit should try to protect the user fr
   - e.g. undo action
   - the escape key should get you out of most transient situations (rebasing, diffing, etc)
 
-## Power
+### Power
 
 Users shouldn't have to drop down the CLI _too_ often. Lazygit should be able to handle some complex use cases.
 
