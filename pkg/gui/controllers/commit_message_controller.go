@@ -143,7 +143,7 @@ func (self *CommitMessageController) handleCommitIndexChange(value int) error {
 	newIndex := currentIndex + value
 	if newIndex == context.NoCommitIndex {
 		self.context().SetSelectedIndex(newIndex)
-		self.c.Helpers().Commits.SetMessageAndDescriptionInView(self.context().GetHistoryMessage())
+		self.c.Helpers().Commits.SetPreservedMessageInView(self.context().GetHistoryMessage())
 		return nil
 	} else if currentIndex == context.NoCommitIndex {
 		self.context().SetHistoryMessage(self.c.Helpers().Commits.JoinCommitMessageAndUnwrappedDescription())
@@ -168,7 +168,7 @@ func (self *CommitMessageController) setCommitMessageAtIndex(index int) (bool, e
 	if self.c.UserConfig().Git.Commit.AutoWrapCommitMessage {
 		commitMessage = helpers.TryRemoveHardLineBreaks(commitMessage, self.c.UserConfig().Git.Commit.AutoWrapWidth)
 	}
-	self.c.Helpers().Commits.UpdateCommitPanelView(commitMessage)
+	self.c.Helpers().Commits.SetMessageAndDescriptionInView(commitMessage)
 	return true, nil
 }
 

@@ -33,10 +33,7 @@ var PreserveCommitMessageWhitespace = NewIntegrationTest(NewIntegrationTestArgs{
 		t.ExpectPopup().CommitMessagePanel().
 			Content(Equals("my commit message")).
 			SwitchToDescription().
-			/* EXPECTED:
 			Content(Equals("\n\nbody  ")).
-			ACTUAL: */
-			Content(Equals("body")).
 			Cancel()
 	},
 })
