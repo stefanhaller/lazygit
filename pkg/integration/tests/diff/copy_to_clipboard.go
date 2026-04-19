@@ -2,7 +2,6 @@ package diff
 
 import (
 	"os"
-	"path/filepath"
 
 	"github.com/jesseduffield/lazygit/pkg/config"
 	. "github.com/jesseduffield/lazygit/pkg/integration/components"
@@ -90,10 +89,7 @@ var CopyToClipboard = NewIntegrationTest(NewIntegrationTestArgs{
 						t.ExpectToast(Equals("File path copied to clipboard"))
 						worktreeDir, _ := os.Getwd()
 						// On windows the following path would have backslashes, but we don't run integration tests on windows yet.
-						/* EXPECTED:
 						expectClipboard(t, Equals(worktreeDir+"/dir/file1"))
-						ACTUAL: */
-						expectClipboard(t, Equals(filepath.Dir(worktreeDir)+"/repo/dir/file1"))
 					})
 			}).
 			Press(keys.Files.CopyFileInfoToClipboard).

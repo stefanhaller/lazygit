@@ -2,7 +2,6 @@ package file
 
 import (
 	"os"
-	"path/filepath"
 
 	"github.com/jesseduffield/lazygit/pkg/config"
 	. "github.com/jesseduffield/lazygit/pkg/integration/components"
@@ -139,10 +138,7 @@ var CopyMenu = NewIntegrationTest(NewIntegrationTestArgs{
 
 				worktreeDir, _ := os.Getwd()
 				// On windows the following path would have backslashes, but we don't run integration tests on windows yet.
-				/* EXPECTED:
 				expectClipboard(t, Equals(worktreeDir+"/dir/1-unstaged_file"))
-				ACTUAL: */
-				expectClipboard(t, Equals(filepath.Dir(worktreeDir)+"/repo/dir/1-unstaged_file"))
 			})
 
 		// Selected path diff on a single (unstaged) file
