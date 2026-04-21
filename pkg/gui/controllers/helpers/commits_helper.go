@@ -179,8 +179,6 @@ func (self *CommitsHelper) CloseCommitMessagePanel() {
 		if message != self.c.Contexts().CommitMessage.GetInitialMessage() {
 			self.c.Contexts().CommitMessage.SetPreservedMessageAndLogError(message)
 		}
-	} else {
-		self.SetMessageAndDescriptionInView("")
 	}
 
 	self.c.Contexts().CommitMessage.SetHistoryMessage("")
