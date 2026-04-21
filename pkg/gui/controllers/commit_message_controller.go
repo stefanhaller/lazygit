@@ -82,6 +82,12 @@ func (self *CommitMessageController) GetOnFocusLost() func(types.OnFocusLostOpts
 	}
 }
 
+func (self *CommitMessageController) GetOnQuit() func() {
+	return func() {
+		self.c.Helpers().Commits.PreserveCommitMessage()
+	}
+}
+
 func (self *CommitMessageController) Context() types.Context {
 	return self.context()
 }

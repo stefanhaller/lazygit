@@ -173,15 +173,17 @@ func (self *CommitsHelper) HandleCommitConfirm() error {
 	return nil
 }
 
-func (self *CommitsHelper) CloseCommitMessagePanel() {
+func (self *CommitsHelper) PreserveCommitMessage() {
 	if self.c.Contexts().CommitMessage.GetPreserveMessage() {
 		message := self.JoinCommitMessageAndUnwrappedDescription()
 		if message != self.c.Contexts().CommitMessage.GetInitialMessage() {
 			self.c.Contexts().CommitMessage.SetPreservedMessageAndLogError(message)
 		}
-	} else {
-		self.SetMessageAndDescriptionInView("")
 	}
+}
+
+func (self *CommitsHelper) CloseCommitMessagePanel() {
+	self.PreserveCommitMessage()
 
 	self.c.Contexts().CommitMessage.SetHistoryMessage("")
 
