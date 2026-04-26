@@ -28,7 +28,7 @@ require (
 	github.com/mitchellh/go-ps v1.0.0
 	github.com/rivo/uniseg v0.4.7
 	github.com/sahilm/fuzzy v0.1.1
-	github.com/samber/lo v1.31.0
+	github.com/samber/lo v1.53.0
 	github.com/sanity-io/litter v1.5.8
 	github.com/sasha-s/go-deadlock v0.3.9
 	github.com/sirupsen/logrus v1.9.3
@@ -69,7 +69,7 @@ require (
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/term v0.41.0 // indirect
-	golang.org/x/text v0.35.0 // indirect
+	golang.org/x/text v0.36.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
