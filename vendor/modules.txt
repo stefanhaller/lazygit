@@ -119,7 +119,7 @@ github.com/kr/logfmt
 ## explicit; go 1.12
 # github.com/kylelemons/godebug v1.1.0
 ## explicit; go 1.11
-# github.com/kyokomi/emoji/v2 v2.2.8
+# github.com/kyokomi/emoji/v2 v2.2.13
 ## explicit; go 1.14
 github.com/kyokomi/emoji/v2
 # github.com/lucasb-eyer/go-colorful v1.4.0
