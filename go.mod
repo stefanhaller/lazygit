@@ -15,7 +15,7 @@ require (
 	github.com/creack/pty v1.1.24
 	github.com/gdamore/tcell/v2 v2.13.8
 	github.com/go-errors/errors v1.5.1
-	github.com/gookit/color v1.4.2
+	github.com/gookit/color v1.6.0
 	github.com/integrii/flaggy v1.8.0
 	github.com/jesseduffield/generics v0.0.0-20250517122708-b0b4a53a6f5c
 	github.com/jesseduffield/gocui v0.3.1-0.20260327132312-944dab3bc980
