@@ -819,6 +819,9 @@ func (self *RefreshHelper) refreshGithubPullRequests() {
 
 	baseRemote := self.getGithubBaseRemote()
 	if baseRemote == nil {
+		self.c.Model().PullRequests = nil
+		self.c.Model().PullRequestsMap = nil
+
 		if !self.githubBaseRemotePromptDismissed[self.c.Git().RepoPaths.RepoPath()] {
 			self.promptForBaseGithubRepo(authToken)
 		}
