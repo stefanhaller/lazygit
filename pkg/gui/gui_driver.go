@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 	"github.com/jesseduffield/lazygit/pkg/commands/models"
 	"github.com/jesseduffield/lazygit/pkg/config"
 	"github.com/jesseduffield/lazygit/pkg/gocui"
@@ -31,18 +31,8 @@ func (self *GuiDriver) PressKey(keyStr string) {
 
 	key := keybindings.GetKey(keyStr)
 
-	var r rune
-	var tcellKey tcell.Key
-	switch v := key.(type) {
-	case rune:
-		r = v
-		tcellKey = tcell.KeyRune
-	case gocui.Key:
-		tcellKey = tcell.Key(v)
-	}
-
 	self.gui.g.ReplayedEvents.Keys <- gocui.NewTcellKeyEventWrapper(
-		tcell.NewEventKey(tcellKey, r, tcell.ModNone),
+		tcell.NewEventKey(tcell.Key(key.KeyName()), key.Str(), tcell.ModNone),
 		0,
 	)
 

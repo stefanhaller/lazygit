@@ -257,7 +257,7 @@ type MenuItem struct {
 
 	// If Key is defined it allows the user to press the key to invoke the menu
 	// item, as opposed to having to navigate to it
-	Key Key
+	Key gocui.Key
 
 	// A widget to show in front of the menu item. Supported widget types are
 	// checkboxes and radio buttons,

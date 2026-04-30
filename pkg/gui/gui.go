@@ -882,7 +882,7 @@ func (gui *Gui) Run(startArgs appTypes.StartArgs) error {
 
 	g.ErrorHandler = gui.PopupHandler.ErrorHandler
 
-	gui.g.ShouldHandleMouseEvent = func(view *gocui.View, key gocui.Key) bool {
+	gui.g.ShouldHandleMouseEvent = func(view *gocui.View, key gocui.KeyName) bool {
 		if gui.helpers.Confirmation.IsPopupPanelFocused() && gui.currentViewName() != view.Name() &&
 			!gocui.IsMouseScrollKey(key) {
 			// we ignore click events on views that aren't popup panels, when a popup panel is focused.

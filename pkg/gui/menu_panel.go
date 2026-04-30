@@ -3,6 +3,7 @@ package gui
 import (
 	"fmt"
 
+	"github.com/jesseduffield/lazygit/pkg/gocui"
 	"github.com/jesseduffield/lazygit/pkg/gui/keybindings"
 	"github.com/jesseduffield/lazygit/pkg/gui/types"
 	"github.com/jesseduffield/lazygit/pkg/theme"
@@ -26,7 +27,7 @@ func (gui *Gui) createMenu(opts types.CreateMenuOptions) error {
 
 	maxColumnSize := 1
 
-	essentialKeys := []types.Key{
+	essentialKeys := []gocui.Key{
 		keybindings.GetKey(gui.c.UserConfig().Keybinding.Universal.ConfirmMenu),
 		keybindings.GetKey(gui.c.UserConfig().Keybinding.Universal.Return),
 		keybindings.GetKey(gui.c.UserConfig().Keybinding.Universal.PrevItem),
@@ -46,7 +47,7 @@ func (gui *Gui) createMenu(opts types.CreateMenuOptions) error {
 
 		// Remove all item keybindings that are the same as one of the essential bindings
 		if !opts.KeepConflictingKeybindings && lo.Contains(essentialKeys, item.Key) {
-			item.Key = nil
+			item.Key = gocui.Key{}
 		}
 	}
 

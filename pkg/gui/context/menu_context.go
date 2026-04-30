@@ -138,7 +138,7 @@ func (self *MenuViewModel) GetDisplayStrings(_ int, _ int) [][]string {
 		}
 
 		keyLabel := ""
-		if item.Key != nil {
+		if item.Key.IsSet() {
 			keyLabel = style.FgCyan.Sprint(keybindings.LabelFromKey(item.Key))
 		}
 
@@ -205,7 +205,7 @@ func (self *MenuViewModel) GetNonModelItems() []*NonModelItem {
 func (self *MenuContext) GetKeybindings(opts types.KeybindingsOpts) []*types.Binding {
 	basicBindings := self.ListContextTrait.GetKeybindings(opts)
 	menuItemsWithKeys := lo.Filter(self.menuItems, func(item *types.MenuItem, _ int) bool {
-		return item.Key != nil
+		return item.Key.IsSet()
 	})
 
 	menuItemBindings := lo.Map(menuItemsWithKeys, func(item *types.MenuItem, _ int) *types.Binding {

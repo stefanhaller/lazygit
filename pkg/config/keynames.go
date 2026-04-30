@@ -11,7 +11,7 @@ import (
 // NOTE: if you make changes to this table, be sure to update
 // docs/keybindings/Custom_Keybindings.md as well
 
-var LabelByKey = map[gocui.Key]string{
+var LabelByKey = map[gocui.KeyName]string{
 	gocui.KeyF1:             "<f1>",
 	gocui.KeyF2:             "<f2>",
 	gocui.KeyF3:             "<f3>",
@@ -42,8 +42,6 @@ var LabelByKey = map[gocui.Key]string{
 	gocui.KeyAltEnter:       "<a-enter>",
 	gocui.KeyEsc:            "<esc>",       // <c-[>, <c-3>
 	gocui.KeyBackspace:      "<backspace>", // <c-h>
-	gocui.KeyCtrlSpace:      "<c-space>",   // <c-~>, <c-2>
-	gocui.KeyCtrlSlash:      "<c-/>",       // <c-_>
 	gocui.KeySpace:          "<space>",
 	gocui.KeyCtrlA:          "<c-a>",
 	gocui.KeyCtrlB:          "<c-b>",
@@ -68,9 +66,6 @@ var LabelByKey = map[gocui.Key]string{
 	gocui.KeyCtrlX:          "<c-x>",
 	gocui.KeyCtrlY:          "<c-y>",
 	gocui.KeyCtrlZ:          "<c-z>",
-	gocui.KeyCtrl4:          "<c-4>", // <c-\>
-	gocui.KeyCtrl5:          "<c-5>", // <c-]>
-	gocui.KeyCtrl6:          "<c-6>",
 	gocui.KeyCtrl8:          "<c-8>",
 	gocui.MouseWheelUp:      "mouse wheel up",
 	gocui.MouseWheelDown:    "mouse wheel down",
