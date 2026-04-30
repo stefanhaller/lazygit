@@ -164,9 +164,6 @@ type View struct {
 	// Overlaps describes which edges are overlapping with another view's edges
 	Overlaps byte
 
-	// If HasLoader is true, the message will be appended with a spinning loader animation
-	HasLoader bool
-
 	// ParentView is the view which catches events bubbled up from the given view if there's no matching handler
 	ParentView *View
 
@@ -881,9 +878,9 @@ func (v *View) writeString(s string) {
 var linkStartChars = []string{"h", "t", "t", "p", "s", ":", "/", "/"}
 
 func findLinkStart(line []cell) int {
-	for i := 0; i < len(line)-len(linkStartChars); i++ {
+	for i := range len(line) - len(linkStartChars) {
 		for j := range linkStartChars {
-			if line[i+j].chr != string(linkStartChars[j]) {
+			if line[i+j].chr != linkStartChars[j] {
 				break
 			}
 			if j == len(linkStartChars)-1 {
@@ -899,7 +896,7 @@ func findLinkStart(line []cell) int {
 // enough, because in markdown it's common to have a hyperlink followed by a
 // ')', so we want to stop there. Hopefully URLs containing ')' are uncommon
 // enough that this is not a problem.
-var lineEndCharacters map[string]bool = map[string]bool{
+var lineEndCharacters = map[string]bool{
 	"":   true,
 	" ":  true,
 	"\n": true,
@@ -927,7 +924,7 @@ func (v *View) autoRenderHyperlinksInCurrentLine() {
 			if _, ok := lineEndCharacters[line[linkEnd].chr]; ok {
 				break
 			}
-			link.WriteString(string(line[linkEnd].chr))
+			link.WriteString(line[linkEnd].chr)
 		}
 		for i := linkStart; i < linkEnd; i++ {
 			v.lines[v.wy][i].hyperlink = link.String()
@@ -988,7 +985,7 @@ func (v *View) parseInput(ch []byte, width int, x int, _ int) (bool, []cell) {
 			chr:       string(ch),
 			width:     width,
 		}
-		for i := 0; i < repeatCount; i++ {
+		for range repeatCount {
 			cells = append(cells, c)
 		}
 	}
@@ -1265,21 +1262,17 @@ func (v *View) draw() {
 		cellIdx := 0
 
 		var c cell
-		for {
-			if x >= maxX {
-				break
-			}
-
+		for x < maxX {
 			if x < 0 {
 				if cellIdx < len(vline.line) {
 					x += uniseg.StringWidth(vline.line[cellIdx].chr)
 					cellIdx++
 					continue
-				} else {
-					// no more characters to write so we're only going to be printing empty cells
-					// past this point
-					x = 0
 				}
+
+				// no more characters to write so we're only going to be printing empty cells
+				// past this point
+				x = 0
 			}
 
 			// if we're out of cells to write, we'll just print empty cells.
@@ -1319,9 +1312,6 @@ func (v *View) refreshViewLinesIfNeeded() {
 		maxX := v.InnerWidth()
 		lineIdx := 0
 		lines := v.lines
-		if v.HasLoader {
-			lines = v.loaderLines()
-		}
 		for i, line := range lines {
 			wrap := 0
 			if v.Wrap {
@@ -1340,9 +1330,7 @@ func (v *View) refreshViewLinesIfNeeded() {
 				lineIdx++
 			}
 		}
-		if !v.HasLoader {
-			v.tainted = false
-		}
+		v.tainted = false
 	}
 }
 
@@ -1424,7 +1412,7 @@ func (v *View) BufferLines() []string {
 	lines := make([]string, len(v.lines))
 	for i, l := range v.lines {
 		str := lineType(l).String()
-		str = strings.Replace(str, "\x00", "", -1)
+		str = strings.ReplaceAll(str, "\x00", "")
 		lines[i] = str
 	}
 	return lines
@@ -1447,7 +1435,7 @@ func (v *View) ViewBufferLines() []string {
 	lines := make([]string, len(v.viewLines))
 	for i, l := range v.viewLines {
 		str := lineType(l.line).String()
-		str = strings.Replace(str, "\x00", "", -1)
+		str = strings.ReplaceAll(str, "\x00", "")
 		lines[i] = str
 	}
 	return lines
@@ -1696,7 +1684,7 @@ func (v *View) SelectedLines() []string {
 func (v *View) lineContentAtIdx(idx int) string {
 	line := v.lines[idx]
 	str := lineType(line).String()
-	return strings.Replace(str, "\x00", "", -1)
+	return strings.ReplaceAll(str, "\x00", "")
 }
 
 func (v *View) SelectedPoint() (int, int) {
@@ -1719,9 +1707,9 @@ func (v *View) SelectedLineRange() (int, int) {
 
 	if start > end {
 		return end, start
-	} else {
-		return start, end
 	}
+
+	return start, end
 }
 
 func (v *View) RenderTextArea() {
@@ -1773,7 +1761,7 @@ func (v *View) overwriteLines(y int, content string) {
 	v.wy = y
 	v.clearViewLines()
 
-	lines := strings.Replace(content, "\n", "\x1b[K\n", -1)
+	lines := strings.ReplaceAll(content, "\n", "\x1b[K\n")
 	// If the last line doesn't end with a linefeed, add the erase command at
 	// the end too
 	if !strings.HasSuffix(lines, "\n") {
@@ -1799,7 +1787,7 @@ func (v *View) OverwriteLinesAndClearEverythingElse(lineCount int, y int, conten
 
 	v.overwriteLines(y, content)
 
-	for i := 0; i < y; i += 1 {
+	for i := range y {
 		v.lines[i] = nil
 	}
 
@@ -1924,9 +1912,9 @@ func (v *View) adjustDownwardScrollAmount(scrollHeight int) int {
 	}
 	if oy+scrollHeight < 0 {
 		return 0
-	} else {
-		return scrollHeight
 	}
+
+	return scrollHeight
 }
 
 // scrollMargin is about how many lines must still appear if you scroll
@@ -1938,9 +1926,9 @@ func (v *View) scrollMargin() int {
 		// we should make this into a field on the view to be configured by the client.
 		// For now we're hardcoding it.
 		return 2
-	} else {
-		return 0
 	}
+
+	return 0
 }
 
 // Returns true if the view contains a line containing the given text with the given
@@ -1966,7 +1954,7 @@ func containsColoredTextInLine(fgColorStr string, text string, line []cell) bool
 		cellColor := tcell.NewHexColor(cell.fgColor.Hex())
 
 		if cellColor == fgColor {
-			currentMatch += string(cell.chr)
+			currentMatch += cell.chr
 		} else if currentMatch != "" {
 			if strings.Contains(currentMatch, text) {
 				return true

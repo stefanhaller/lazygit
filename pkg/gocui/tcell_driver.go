@@ -55,17 +55,20 @@ var runeReplacements = map[rune]string{
 func (g *Gui) tcellInit(runeReplacements map[rune]string) error {
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
 
-	if s, e := tcell.NewScreen(); e != nil {
+	s, e := tcell.NewScreen()
+	if e != nil {
 		return e
-	} else if e = s.Init(); e != nil {
-		return e
-	} else {
-		registerRuneFallbacks(s, runeReplacements)
-
-		g.screen = s
-		Screen = s
-		return nil
 	}
+
+	if e = s.Init(); e != nil {
+		return e
+	}
+
+	registerRuneFallbacks(s, runeReplacements)
+
+	g.screen = s
+	Screen = s
+	return nil
 }
 
 func registerRuneFallbacks(s tcell.Screen, additional map[rune]string) {
@@ -83,15 +86,15 @@ func (g *Gui) tcellInitSimulation(width int, height int) error {
 	s := tcell.NewSimulationScreen("")
 	if e := s.Init(); e != nil {
 		return e
-	} else {
-		g.screen = s
-		Screen = s
-		// setting to a larger value than the typical terminal size
-		// so that during a test we're more likely to see an item to select in a view.
-		s.SetSize(width, height)
-		s.Sync()
-		return nil
 	}
+
+	g.screen = s
+	Screen = s
+	// setting to a larger value than the typical terminal size
+	// so that during a test we're more likely to see an item to select in a view.
+	s.SetSize(width, height)
+	s.Sync()
+	return nil
 }
 
 // tcellSetCell sets the character cell at a given location to the given
@@ -194,9 +197,9 @@ const (
 var (
 	lastMouseKey tcell.ButtonMask = tcell.ButtonNone
 	lastMouseMod tcell.ModMask    = tcell.ModNone
-	dragState    int              = NOT_DRAGGING
-	lastX        int              = 0
-	lastY        int              = 0
+	dragState                     = NOT_DRAGGING
+	lastX                         = 0
+	lastY                         = 0
 )
 
 // this wrapper struct has public keys so we can easily serialize/deserialize to JSON

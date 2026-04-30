@@ -13,9 +13,7 @@ import (
 )
 
 type (
-	wchar uint16
 	short int16
-	dword uint32
 	word  uint16
 )
 
