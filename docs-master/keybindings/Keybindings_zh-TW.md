@@ -2,8 +2,6 @@ _This file is auto-generated. To update, make the changes in the pkg/i18n direct
 
 # Lazygit 鍵盤快捷鍵
 
-_說明：`<c-b>` 表示 Ctrl＋B、`<a-b>` 表示 Alt＋B，`B`表示 Shift＋B_
-
 ## 全域快捷鍵
 
 | Key | Action | Info |

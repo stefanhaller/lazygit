@@ -2,8 +2,6 @@ _This file is auto-generated. To update, make the changes in the pkg/i18n direct
 
 # Lazygit キーバインディング
 
-_凡例：`＜c-b＞` はctrl+b、`＜a-b＞` はalt+b、`B` はshift+bを意味します_
-
 ## グローバルキーバインド
 
 | Key | Action | Info |

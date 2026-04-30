@@ -2,8 +2,6 @@ _This file is auto-generated. To update, make the changes in the pkg/i18n direct
 
 # Lazygit 按键绑定
 
-_图例：`<c-b>` 意味着ctrl+b, `<a-b>意味着Alt+b, `B` 意味着shift+b_
-
 ## 全局键绑定
 
 | Key | Action | Info |

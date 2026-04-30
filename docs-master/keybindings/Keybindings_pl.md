@@ -2,8 +2,6 @@ _This file is auto-generated. To update, make the changes in the pkg/i18n direct
 
 # Lazygit Skróty klawiszowe
 
-_Legenda: `<c-b>` oznacza ctrl+b, `<a-b>` oznacza alt+b, `B` oznacza shift+b_
-
 ## Globalne skróty klawiszowe
 
 | Key | Action | Info |

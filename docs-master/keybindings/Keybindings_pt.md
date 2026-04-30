@@ -2,8 +2,6 @@ _This file is auto-generated. To update, make the changes in the pkg/i18n direct
 
 # Lazygit Atalhos do teclado
 
-_Legend: `<c-b>` means ctrl+b, `<a-b>` means alt+b, `B` means shift+b_
-
 ## Combinações globais de teclas
 
 | Key | Action | Info |
