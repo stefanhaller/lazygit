@@ -174,8 +174,8 @@ _Legend: `<c-b>` means ctrl+b, `<a-b>` means alt+b, `B` means shift+b_
 | `` p `` | Escolher | Marque o commit selecionado para ser escolhido (quando meados da base). Isso significa que o commit será mantido ao continuar o rebase. |
 | `` F `` | Criar commit de correção | Crie o commit 'correção!' para o commit selecionado. Mais tarde, você pode pressionar `S` neste mesmo commit para aplicar todas os commits de correção acima. |
 | `` S `` | Aplicar commits de correções | Aplicar Squash all 'correção!', seja acima do commit selecionado, ou tudo no branch atual (autosquash). |
-| `` <c-j> `` | Mover commit um para baixo |  |
-| `` <c-k> `` | Mover o commit um para cima |  |
+| `` <a-down> `` | Mover commit um para baixo |  |
+| `` <a-up> `` | Mover o commit um para cima |  |
 | `` V `` | Colar (cherry-pick) |  |
 | `` B `` | Mark as base commit for rebase | Select a base commit for the next rebase. When you rebase onto a branch, only commits above the base commit will be brought across. This uses the `git rebase --onto` command. |
 | `` A `` | Modificar | Alterar o commit com mudanças em sted. Se o commit selecionado for o commit HEAD, ele executará o `git commit --amend`. Caso contrário, o compromisso será alterado por meio de uma base de apoio. |
@@ -233,8 +233,8 @@ _Legend: `<c-b>` means ctrl+b, `<a-b>` means alt+b, `B` means shift+b_
 
 | Key | Action | Info |
 |-----|--------|-------------|
-| `` mouse wheel down (fn+up) `` | Rolar para baixo |  |
-| `` mouse wheel up (fn+down) `` | Rolar para cima |  |
+| `` <mouse wheel down> (fn+up) `` | Rolar para baixo |  |
+| `` <mouse wheel up> (fn+down) `` | Rolar para cima |  |
 | `` <tab> `` | Mudar de visão | Alternar para outra visão (staged/não processadas alterações). |
 | `` <esc> `` | Exit back to side panel |  |
 | `` / `` | Pesquisar na visualização atual por texto |  |

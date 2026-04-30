@@ -10,7 +10,6 @@ import (
 	"github.com/jesseduffield/lazygit/pkg/commands/models"
 	"github.com/jesseduffield/lazygit/pkg/config"
 	"github.com/jesseduffield/lazygit/pkg/gocui"
-	"github.com/jesseduffield/lazygit/pkg/gui/keybindings"
 	"github.com/jesseduffield/lazygit/pkg/gui/types"
 	integrationTypes "github.com/jesseduffield/lazygit/pkg/integration/types"
 )
@@ -29,10 +28,13 @@ var _ integrationTypes.GuiDriver = &GuiDriver{}
 func (self *GuiDriver) PressKey(keyStr string) {
 	self.CheckAllToastsAcknowledged()
 
-	key := keybindings.GetKey(keyStr)
+	key, ok := config.KeyFromLabel(keyStr)
+	if !ok {
+		self.Fail("Unrecognized key: " + keyStr)
+	}
 
 	self.gui.g.ReplayedEvents.Keys <- gocui.NewTcellKeyEventWrapper(
-		tcell.NewEventKey(tcell.Key(key.KeyName()), key.Str(), tcell.ModNone),
+		tcell.NewEventKey(tcell.Key(key.KeyName()), key.Str(), tcell.ModMask(key.Mod())),
 		0,
 	)
 

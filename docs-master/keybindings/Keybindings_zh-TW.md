@@ -80,8 +80,8 @@ _說明：`<c-b>` 表示 Ctrl＋B、`<a-b>` 表示 Alt＋B，`B`表示 Shift＋B
 
 | Key | Action | Info |
 |-----|--------|-------------|
-| `` mouse wheel down (fn+up) `` | 向下捲動 |  |
-| `` mouse wheel up (fn+down) `` | 向上捲動 |  |
+| `` <mouse wheel down> (fn+up) `` | 向下捲動 |  |
+| `` <mouse wheel up> (fn+down) `` | 向上捲動 |  |
 | `` <tab> `` | 切換至另一個面板 (已預存/未預存更改) | Switch to other view (staged/unstaged changes). |
 | `` <esc> `` | Exit back to side panel |  |
 | `` / `` | 搜尋 |  |
@@ -194,8 +194,8 @@ _說明：`<c-b>` 表示 Ctrl＋B、`<a-b>` 表示 Alt＋B，`B`表示 Shift＋B
 | `` p `` | 挑選 | 挑選提交 (於變基過程中) |
 | `` F `` | 建立修復提交 | 為此提交建立修復提交 |
 | `` S `` | 壓縮上方所有「fixup」提交（自動壓縮） | 是否壓縮上方 {{.commit}} 所有「fixup」提交？ |
-| `` <c-j> `` | 向下移動提交 |  |
-| `` <c-k> `` | 向上移動提交 |  |
+| `` <a-down> `` | 向下移動提交 |  |
+| `` <a-up> `` | 向上移動提交 |  |
 | `` V `` | 貼上提交 (揀選) |  |
 | `` B `` | 為了變基已標注提交為基準提交 | 請為了下一次變基選擇一項基準提交；此將執行 `git rebase --onto`。 |
 | `` A `` | 修改 | 使用已預存的更改修正提交 |

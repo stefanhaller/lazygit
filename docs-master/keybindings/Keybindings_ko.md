@@ -160,8 +160,8 @@ _Legend: `<c-b>` means ctrl+b, `<a-b>` means alt+b, `B` means shift+b_
 
 | Key | Action | Info |
 |-----|--------|-------------|
-| `` mouse wheel down (fn+up) `` | 아래로 스크롤 |  |
-| `` mouse wheel up (fn+down) `` | 위로 스크롤 |  |
+| `` <mouse wheel down> (fn+up) `` | 아래로 스크롤 |  |
+| `` <mouse wheel up> (fn+down) `` | 위로 스크롤 |  |
 | `` <tab> `` | 패널 전환 | Switch to other view (staged/unstaged changes). |
 | `` <esc> `` | Exit back to side panel |  |
 | `` / `` | 검색 시작 |  |
@@ -310,8 +310,8 @@ _Legend: `<c-b>` means ctrl+b, `<a-b>` means alt+b, `B` means shift+b_
 | `` p `` | Pick | Pick commit (when mid-rebase) |
 | `` F `` | Create fixup commit | Create fixup commit for this commit |
 | `` S `` | Apply fixup commits | Squash all 'fixup!' commits above selected commit (autosquash) |
-| `` <c-j> `` | 커밋을 1개 아래로 이동 |  |
-| `` <c-k> `` | 커밋을 1개 위로 이동 |  |
+| `` <a-down> `` | 커밋을 1개 아래로 이동 |  |
+| `` <a-up> `` | 커밋을 1개 위로 이동 |  |
 | `` V `` | 커밋을 붙여넣기 (cherry-pick) |  |
 | `` B `` | Mark as base commit for rebase | Select a base commit for the next rebase. When you rebase onto a branch, only commits above the base commit will be brought across. This uses the `git rebase --onto` command. |
 | `` A `` | Amend | Amend commit with staged changes |

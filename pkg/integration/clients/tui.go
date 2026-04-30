@@ -72,7 +72,7 @@ func RunTUI(raceDetector bool) {
 		log.Panicln(err)
 	}
 
-	if err := g.SetKeybinding("list", gocui.NewKeyName(gocui.KeyCtrlC), gocui.ModNone, quit); err != nil {
+	if err := g.SetKeybinding("list", gocui.NewKeyStrMod("c", gocui.ModCtrl), gocui.ModNone, quit); err != nil {
 		log.Panicln(err)
 	}
 
@@ -273,9 +273,9 @@ func (self *app) renderTests() {
 	}
 }
 
-func (self *app) wrapEditor(f func(v *gocui.View, key gocui.Key, mod gocui.Modifier) bool) func(v *gocui.View, key gocui.Key, mod gocui.Modifier) bool {
-	return func(v *gocui.View, key gocui.Key, mod gocui.Modifier) bool {
-		matched := f(v, key, mod)
+func (self *app) wrapEditor(f func(v *gocui.View, key gocui.Key) bool) func(v *gocui.View, key gocui.Key) bool {
+	return func(v *gocui.View, key gocui.Key) bool {
+		matched := f(v, key)
 		if matched {
 			self.filterWithString(v.TextArea.GetContent())
 		}

@@ -8,7 +8,6 @@ import (
 	"github.com/jesseduffield/lazygit/pkg/gocui"
 	"github.com/jesseduffield/lazygit/pkg/gui/context"
 	"github.com/jesseduffield/lazygit/pkg/gui/controllers/helpers"
-	"github.com/jesseduffield/lazygit/pkg/gui/keybindings"
 	"github.com/jesseduffield/lazygit/pkg/gui/types"
 	"github.com/samber/lo"
 )
@@ -37,7 +36,7 @@ func (self *KeybindingCreator) call(customCommand config.CustomCommand, handler 
 	return lo.Map(viewNames, func(viewName string, _ int) *types.Binding {
 		return &types.Binding{
 			ViewName:    viewName,
-			Key:         keybindings.GetKey(customCommand.Key),
+			Key:         config.GetValidatedKeyBindingKey(customCommand.Key),
 			Modifier:    gocui.ModNone,
 			Handler:     handler,
 			Description: customCommand.GetDescription(),

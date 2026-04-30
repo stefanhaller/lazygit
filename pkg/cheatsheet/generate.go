@@ -22,7 +22,6 @@ import (
 	"github.com/jesseduffield/lazycore/pkg/utils"
 	"github.com/jesseduffield/lazygit/pkg/app"
 	"github.com/jesseduffield/lazygit/pkg/config"
-	"github.com/jesseduffield/lazygit/pkg/gui/keybindings"
 	"github.com/jesseduffield/lazygit/pkg/gui/types"
 	"github.com/jesseduffield/lazygit/pkg/i18n"
 	"github.com/samber/lo"
@@ -157,7 +156,7 @@ func getBindingSections(bindings []*types.Binding, tr *i18n.TranslationSet) []*b
 		bindingsByHeader,
 		func(header header, hBindings []*types.Binding) headerWithBindings {
 			uniqBindings := lo.UniqBy(hBindings, func(binding *types.Binding) string {
-				return binding.Description + keybindings.LabelFromKey(binding.Key)
+				return binding.Description + config.LabelForKey(binding.Key)
 			})
 
 			return headerWithBindings{
@@ -217,7 +216,7 @@ func formatTitle(title string) string {
 }
 
 func formatBinding(binding *types.Binding) string {
-	action := keybindings.LabelFromKey(binding.Key)
+	action := config.LabelForKey(binding.Key)
 	description := binding.Description
 	if binding.Alternative != "" {
 		action += fmt.Sprintf(" (%s)", binding.Alternative)

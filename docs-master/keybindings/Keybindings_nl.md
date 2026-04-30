@@ -170,8 +170,8 @@ _Legend: `<c-b>` means ctrl+b, `<a-b>` means alt+b, `B` means shift+b_
 | `` p `` | Pick | Kies commit (wanneer midden in rebase) |
 | `` F `` | Creëer fixup commit | Creëer fixup commit |
 | `` S `` | Apply fixup commits | Squash bovenstaande commits |
-| `` <c-j> `` | Verplaats commit 1 naar beneden |  |
-| `` <c-k> `` | Verplaats commit 1 naar boven |  |
+| `` <a-down> `` | Verplaats commit 1 naar beneden |  |
+| `` <a-up> `` | Verplaats commit 1 naar boven |  |
 | `` V `` | Plak commits (cherry-pick) |  |
 | `` B `` | Mark as base commit for rebase | Select a base commit for the next rebase. When you rebase onto a branch, only commits above the base commit will be brought across. This uses the `git rebase --onto` command. |
 | `` A `` | Amend | Wijzig commit met staged veranderingen |
@@ -229,8 +229,8 @@ _Legend: `<c-b>` means ctrl+b, `<a-b>` means alt+b, `B` means shift+b_
 
 | Key | Action | Info |
 |-----|--------|-------------|
-| `` mouse wheel down (fn+up) `` | Scroll omlaag |  |
-| `` mouse wheel up (fn+down) `` | Scroll omhoog |  |
+| `` <mouse wheel down> (fn+up) `` | Scroll omlaag |  |
+| `` <mouse wheel up> (fn+down) `` | Scroll omhoog |  |
 | `` <tab> `` | Ga naar een ander paneel | Switch to other view (staged/unstaged changes). |
 | `` <esc> `` | Exit back to side panel |  |
 | `` / `` | Start met zoeken |  |

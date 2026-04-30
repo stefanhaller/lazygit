@@ -119,7 +119,7 @@ func (self *CommitDescriptionController) handleTogglePanel() error {
 		// which is common in pasted code snippets.
 		view := self.Context().GetView()
 		for range 4 {
-			view.Editor.Edit(view, gocui.NewKeyRune(' '), 0)
+			view.Editor.Edit(view, gocui.NewKeyRune(' '))
 		}
 		return nil
 	}

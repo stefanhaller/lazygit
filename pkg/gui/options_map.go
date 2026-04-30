@@ -5,10 +5,10 @@ import (
 	"strings"
 
 	"github.com/jesseduffield/generics/set"
+	"github.com/jesseduffield/lazygit/pkg/config"
 	"github.com/jesseduffield/lazygit/pkg/gocui"
 	"github.com/jesseduffield/lazygit/pkg/gui/context"
 	"github.com/jesseduffield/lazygit/pkg/gui/controllers/helpers"
-	"github.com/jesseduffield/lazygit/pkg/gui/keybindings"
 	"github.com/jesseduffield/lazygit/pkg/gui/style"
 	"github.com/jesseduffield/lazygit/pkg/gui/types"
 	"github.com/jesseduffield/lazygit/pkg/theme"
@@ -60,7 +60,7 @@ func (self *OptionsMapMgr) renderContextOptionsMap() {
 		}
 
 		return bindingInfo{
-			key:         keybindings.LabelFromKey(binding.Key),
+			key:         config.LabelForKey(binding.Key),
 			description: binding.GetShortDescription(),
 			style:       displayStyle,
 		}

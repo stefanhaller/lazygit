@@ -98,8 +98,8 @@ _Legend: `<c-b>` means ctrl+b, `<a-b>` means alt+b, `B` means shift+b_
 | `` p `` | Pick | Mark the selected commit to be picked (when mid-rebase). This means that the commit will be retained upon continuing the rebase. |
 | `` F `` | Create fixup commit | Create 'fixup!' commit for the selected commit. Later on, you can press `S` on this same commit to apply all above fixup commits. |
 | `` S `` | Apply fixup commits | Squash all 'fixup!' commits, either above the selected commit, or all in current branch (autosquash). |
-| `` <c-j> `` | Move commit down one |  |
-| `` <c-k> `` | Move commit up one |  |
+| `` <a-down> `` | Move commit down one |  |
+| `` <a-up> `` | Move commit up one |  |
 | `` V `` | Paste (cherry-pick) |  |
 | `` B `` | Mark as base commit for rebase | Select a base commit for the next rebase. When you rebase onto a branch, only commits above the base commit will be brought across. This uses the `git rebase --onto` command. |
 | `` A `` | Amend | Amend commit with staged changes. If the selected commit is the HEAD commit, this will perform `git commit --amend`. Otherwise the commit will be amended via a rebase. |
@@ -221,8 +221,8 @@ _Legend: `<c-b>` means ctrl+b, `<a-b>` means alt+b, `B` means shift+b_
 
 | Key | Action | Info |
 |-----|--------|-------------|
-| `` mouse wheel down (fn+up) `` | Scroll down |  |
-| `` mouse wheel up (fn+down) `` | Scroll up |  |
+| `` <mouse wheel down> (fn+up) `` | Scroll down |  |
+| `` <mouse wheel up> (fn+down) `` | Scroll up |  |
 | `` <tab> `` | Switch view | Switch to other view (staged/unstaged changes). |
 | `` <esc> `` | Exit back to side panel |  |
 | `` / `` | Search the current view by text |  |
