@@ -1,1 +1,4 @@
 disableStartupPopups: true
+git:
+  autoRefresh: false
+  autoFetch: false
