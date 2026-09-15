@@ -1,8 +1,7 @@
 # OSC 1717 diff metadata on Windows
 
-A briefing for a session picking this up on the Windows machine. It states the
-problem, what is already established about it, and what to do next. Read
-`AGENTS.md` as well; everything in it applies here.
+What goes wrong with the diff metadata on Windows, what the evidence says, and
+what is left to decide. Read `AGENTS.md` as well; everything in it applies here.
 
 ## The feature
 
@@ -19,8 +18,6 @@ the view in `pkg/gocui/view.go`, and acts on them in
 `pkg/gui/controllers/helpers/diff_line_parser.go`. They are what lets staging,
 line selection, hunk navigation and "open in editor" work when a renderer has
 restructured the diff so far that the rendering can no longer be parsed as one.
-Without them lazygit falls back to parsing the rendered text as a unified diff,
-which under delta fails, so the rows resolve to nothing.
 
 The protocol is specified at <https://github.com/stefanhaller/diff-line-metadata-spec>.
 delta's emitter is <https://github.com/dandavison/delta/pull/2181>.
@@ -32,115 +29,114 @@ the line. So a record has to arrive **after the row break that ends the previous
 row and before the text of the row it describes**. Nothing else about the stream
 matters to the identity layer.
 
-On Unix lazygit reads the renderer's own bytes, so the invariant holds by
-construction. On Windows lazygit reads what ConPTY makes of those bytes, and
-whether the invariant survives that is the open question.
-
 ## The symptom
 
-Reported on Windows 11 build 26200, lazygit running in Windows Terminal, with
-the patched delta. Two failures, both intermittent:
+On Windows 11 build 26200, lazygit in Windows Terminal, patched delta: the first
+hunk of a commit's diff is often not recognized at all, and the hunks that are
+recognized are one line off. Neither happens on macOS with the same delta.
 
-1. Hunks are not recognized at all.
-2. When they are recognized, they are often one line off.
+## What the evidence says
 
-Neither happens on macOS with the same delta and the same diffs.
+One commit's diff was captured on both platforms with `LAZYGIT_DUMP_STREAM` and
+replayed through `TestReplayStreamDump`. The cause is settled.
 
-## What is established
+**ConPTY delivers each OSC 1717 record as a write of its own, decoupled from the
+text it belongs to.** conhost forwards a sequence it can't represent in its
+screen buffer to the terminal side the moment it parses it, while the text goes
+into the buffer and reaches the terminal side later, when a frame is painted. So
+the records overtake the rows they describe.
 
-**A displacement of the record across the row break produces exactly these two
-symptoms.** This was reproduced on macOS by replaying synthetic streams through
-the real reading pipeline (see "How to read a dump" below):
+The measurements, Windows against macOS:
 
-| What the stream does with the record | What lazygit does with it |
-| --- | --- |
-| record, then the row's text, then LF | correct; every row carries its record |
-| row's text, then the **next** row's record, then LF | every row reports the identity of the row below it, and the last row reports none — **symptom 2** |
-| record, then a cursor-position escape, then the text | the record is destroyed and the row carries none — **symptom 1** |
-| a cursor-position escape, then the record, then the text | correct |
-| record, then CR, then text, then LF | correct |
-| CRLF row breaks instead of LF | correct |
+| | macOS | Windows |
+| --- | --- | --- |
+| records in the stream | 148 | 148, byte-identical and in the same order |
+| reads the stream arrived in | 22, median 1024 bytes | 24, median **32 bytes** |
+| reads carrying records but no text | 0 | **13, holding 20 records** |
+| rows of the view carrying a record | 147 of 180 | 128 of 180 |
 
-The two failing shapes differ from the working ones only in that the record
-arrives before the row break rather than after it. The reason the two failures
-look so different is the kind of row break involved. When the break is a
-newline, `finishLine` in `pkg/gocui/view.go` keeps the stranded record by giving
-it a cell on the row that is ending, so it survives on the wrong row. When the
-break is a cursor-position escape, the `cursorDown` branch of the write loop
-advances without calling `finishLine`, and `advanceToNextLine` resets the
-pending record, so it is lost.
+Nothing is lost or garbled in transit. Only the position of each record relative
+to the text differs, and that is the one thing the protocol depends on.
 
-**ConPTY is not obviously the culprit any more, but it is still the prime
-suspect.** microsoft/terminal#1173 asked for a passthrough mode; it is closed,
-and microsoft/terminal#17510 ("remove VtEngine") merged on 2024-08-01 made
-ConPTY forward an application's VT output unmodified rather than re-rendering it
-through a screen buffer. Build 26200 is well past that, so delta's records ought
-to arrive verbatim. Two things keep the suspicion alive. That PR's own notes call
-out a workaround for delayed end-of-line wrapping as having broken reflow, and a
-deferred row break is precisely a row break that can end up on the wrong side of
-a record. And `pkg/gocui/escape.go` already carries machinery for ConPTY
-emitting cursor-position escapes in place of newlines to skip blank rows, so
-that shape does occur.
+The two symptoms are two degrees of the same displacement:
 
-This yields a prediction worth checking first: the displacement sets in on the
-row after one whose text reaches the full width of the pty, because that is the
-row whose break ConPTY has to synthesize rather than forward.
+- **The missing first hunk.** Twenty records — every record of the first file,
+  plus the file header of the second — arrived before any of their text was
+  painted, in thirteen back-to-back writes carrying no text at all. gocui keeps
+  records that cover no cell by giving each one a zero-width carrier cell, so all
+  twenty landed on row 1 of the view, and the rows they describe carry nothing.
+  How many records get ahead of the painting depends on timing, which is why this
+  comes and goes.
+- **The rows one line off.** After the painting catches up, each record arrives
+  just before the row break that ends the previous row rather than just after it.
+  `finishLine` in `pkg/gocui/view.go` strands it on the row that is ending. The
+  added file in the captured diff shows this on every row: macOS pairs the record
+  `1;a;1` with the text `package tasks`, Windows pairs `1;a;2` with it.
 
-## What to do first: capture the stream
+A third effect is visible and would bite on its own. Windows encodes a blank row
+as a cursor-position escape instead of a row break, and the `cursorDown` branch
+of the write loop advances the row without calling `finishLine`, so a record
+pending at that moment is discarded rather than stranded. Eleven blank rows in
+this one diff came through that way.
+
+**This cannot be repaired in gocui.** By the time lazygit reads the stream, the
+adjacency that tied a record to its row is gone, and no rule about what to do
+with a pending record can recover it.
+
+(One difference between the two captures is not part of the cause. The macOS
+delta ran with `--syntax-theme=none` and the Windows one did not. The record
+sequences are identical, so it changes nothing here.)
+
+## What is left to decide
+
+The fix has to keep conhost out of the path between the renderer and lazygit.
+
+1. **Run the renderer through a pipe on Windows rather than a pty.** The pty is
+   there to make git invoke `GIT_PAGER`, so piping git's output into the renderer
+   ourselves removes the need for it. lazygit already passes `--color=always` to
+   git, so git's own colors don't depend on a terminal. What needs checking is
+   whether each renderer still colorizes when its stdout is not a terminal. For
+   delta on Windows, one command settles it:
+   `git show --color=always <sha> | delta --paging=never > out.txt`, then look for
+   SGR sequences and `1717` records in `out.txt`.
+2. **Find out whether ConPTY can be told not to do this.** microsoft/terminal#1173
+   asked for a passthrough mode and microsoft/terminal#17510 ("remove VtEngine",
+   merged 2024-08-01) claims to have made passthrough the default. The captured
+   stream is plainly not a passthrough of delta's bytes, so either a flag is
+   missing on our `CreatePseudoConsole` call or that passthrough is narrower than
+   it sounds. The evidence leans towards the decoupling being inherent to how
+   conhost flushes a sequence it doesn't model, so treat this as a short
+   experiment, not a plan. It would need a fallback for older Windows anyway.
+3. Carrying the row number in the record would not help. conhost re-renders the
+   rows themselves, so a row number from the renderer wouldn't describe the
+   stream lazygit ends up reading.
+
+Which of these to pursue is Stefan's call, made with the macOS session that has
+the history of this work. Don't start on a fix here.
+
+## Capturing and reading a stream
 
 `LAZYGIT_DUMP_STREAM` records every byte lazygit reads from a command, framed so
-that the read boundaries survive, with a note per render giving the pty size and
-the content width. Capture a bad case on Windows:
+the read boundaries survive, with a note per render giving the pty size and the
+content width:
 
 ```
 $env:LAZYGIT_DUMP_STREAM = "C:\tmp\windows.dump"
-.\lazygit.exe
 ```
 
-Select a commit whose diff misbehaves, confirm it misbehaves, and quit. Every
-main-view render appends to the file, so keep the session to the one diff, and
-delete the file between attempts. Note down what you saw: whether the rows
-resolved to nothing or to the row below, and at which row it started.
-
-Then capture the same diff of the same repository on macOS, where it works. Two
-dumps of one diff from the two platforms answer the question by subtraction: the
-difference between the streams is the bug, and everything else can be ruled out.
-
-## How to read a dump
-
-`TestReplayStreamDump` in `pkg/tasks/stream_dump_replay_test.go` reads a dump
-back through the same scanner and into a real view, on either platform:
+Every render appends, so keep a session to the one diff of interest and delete
+the file between attempts. `TestReplayStreamDump` reads a dump back through the
+same scanner and into a real view, on either platform:
 
 ```
 LAZYGIT_REPLAY_DUMP=/path/to/windows.dump go test ./pkg/tasks/ -run TestReplayStreamDump -v
 ```
 
-It prints three things. The notes say what was being read and at what width. The
-annotated stream gives one line per event, with the row and column each event
-happens at, so the placement of every record relative to the text and the row
-breaks can be read off directly; a text run that reaches the width is flagged.
-The replayed view lists each row of the result with the records that landed on
-it, which is what every consumer of the metadata sees. A row whose text says
-line 42 while its record says 41 is symptom 2; a row with no record at all is
-symptom 1.
-
-`LAZYGIT_REPLAY_EVENTS` raises the cap on annotated events (400 by default), and
-`LAZYGIT_REPLAY_WIDTH` overrides the width the dump states. Replaying at the
-wrong width invents soft-wraps the capturing machine didn't have.
-
-## Where the fix will go, and who decides
-
-If the dump shows the record displaced, the question is whether to stop ConPTY
-producing the displacement or to make the record-to-row binding in
-`pkg/gocui/view.go` tolerate it. The second touches code that Unix shares, and
-the first may mean not running diff renderers in a pty on Windows at all, which
-is a change to how every renderer is invoked. Both are calls for Stefan to make
-with the macOS session that has the full history of this work, per the
-"Surface mid-implementation decisions" section of `AGENTS.md`.
-
-So: capture the dumps, run the replay, report what the two halves of its output
-say, and stop there. Do not design or apply a fix, and do not change the
-protocol or the emitter.
+It prints the notes, the stream annotated one event per line with the row and
+column each event happens at, and the resulting view with the records that landed
+on each row. `LAZYGIT_REPLAY_EVENTS` raises the cap on annotated events (400 by
+default) and `LAZYGIT_REPLAY_WIDTH` overrides the width the dump states.
+Replaying at the wrong width invents soft-wraps the capturing machine didn't have.
 
 ## Ground rules on this machine
 
