@@ -392,6 +392,7 @@ func (g *Gui) WaitUntilIdle() {
 // initialization and when gocui is not needed anymore.
 func (g *Gui) Close() {
 	close(g.stop)
+	g.waitForColorSchemeReplies()
 	Screen.Fini()
 }
 
@@ -736,6 +737,17 @@ func (g *Gui) DetectedColorScheme() DetectedColorScheme {
 // the terminal's colors change after startup.
 func (g *Gui) SetColorSchemeChangeHandler(handler func(DetectedColorScheme) error) {
 	g.colorSchemeHandler = handler
+}
+
+// Long enough for the round trip of a slow ssh connection
+const colorSchemeReplyTimeout = 500 * time.Millisecond
+
+// waitForColorSchemeReplies is for before we give up the terminal. tcell is
+// still reading the input at that point, so the answers are consumed as usual.
+func (g *Gui) waitForColorSchemeReplies() {
+	if g.colorSchemeTty != nil {
+		g.colorSchemeTty.waitForReplies(colorSchemeReplyTimeout)
+	}
 }
 
 func (g *Gui) SetOpenHyperlinkFunc(openHyperlinkFunc func(string, string) error) {
@@ -2093,6 +2105,8 @@ func (g *Gui) onFocus(ev *GocuiEvent) error {
 // after re-engaging.
 
 func (g *Gui) Suspend() error {
+	g.waitForColorSchemeReplies()
+
 	g.suspendedMutex.Lock()
 	defer g.suspendedMutex.Unlock()
 

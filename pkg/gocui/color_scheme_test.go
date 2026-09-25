@@ -3,6 +3,7 @@ package gocui
 import (
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/gdamore/tcell/v3"
 	"github.com/stretchr/testify/assert"
@@ -315,4 +316,87 @@ func TestColorSchemeOfBackground(t *testing.T) {
 		assert.True(t, ok)
 		assert.Equal(t, expected, colorSchemeOfBackground(color), background)
 	}
+}
+
+// startWaiting starts waiting for replies, with a timeout too long to matter
+func (self *colorSchemeTtyTest) startWaiting() <-chan struct{} {
+	done := make(chan struct{})
+	go func() {
+		self.tty.waitForReplies(time.Minute)
+		close(done)
+	}()
+	return done
+}
+
+func isClosed(ch <-chan struct{}) bool {
+	select {
+	case <-ch:
+		return true
+	default:
+		return false
+	}
+}
+
+func assertDoneWaiting(t *testing.T, done <-chan struct{}) {
+	t.Helper()
+	assert.Eventually(t, func() bool { return isClosed(done) }, time.Second, time.Millisecond)
+}
+
+func assertStillWaiting(t *testing.T, done <-chan struct{}) {
+	t.Helper()
+	assert.Never(t, func() bool { return isClosed(done) }, 50*time.Millisecond, time.Millisecond)
+}
+
+func TestColorSchemeTtyWaitsForReplies(t *testing.T) {
+	test := newColorSchemeTtyTest("")
+
+	assert.NoError(t, test.tty.Start())
+	test.feed("\x1b[?997;1n\x1b]11;rgb:0000/0000/0000\a")
+	assertDoneWaiting(t, test.startWaiting())
+
+	assert.NoError(t, test.tty.Stop())
+	assert.NoError(t, test.tty.Start())
+
+	done := test.startWaiting()
+	assertStillWaiting(t, done)
+	test.feed("\x1b[?997;1n")
+	assertStillWaiting(t, done)
+	test.feed("\x1b]11;rgb:0000/0000/0000\a")
+	assertDoneWaiting(t, done)
+
+	test.tty.onFocusGained()
+	done = test.startWaiting()
+	assertStillWaiting(t, done)
+	test.feed("\x1b]11;rgb:0000/0000/0000\a")
+	assertDoneWaiting(t, done)
+}
+
+func TestColorSchemeTtyGivesUpWaiting(t *testing.T) {
+	test := newColorSchemeTtyTest("")
+
+	assert.NoError(t, test.tty.Start())
+	test.feed("\x1b[?997;1n\x1b]11;rgb:0000/0000/0000\a")
+	test.tty.onFocusGained()
+
+	start := time.Now()
+	test.tty.waitForReplies(20 * time.Millisecond)
+	assert.GreaterOrEqual(t, time.Since(start), 20*time.Millisecond)
+}
+
+func TestColorSchemeTtyDoesntWaitForRepliesThatNeverCame(t *testing.T) {
+	test := newColorSchemeTtyTest("")
+
+	// The terminal answers nothing
+	assert.NoError(t, test.tty.Start())
+	assertDoneWaiting(t, test.startWaiting())
+
+	// The terminal reports its color scheme, but not its background
+	test.feed("\x1b[?997;1n\x1b[?62;22c")
+	assert.NoError(t, test.tty.Stop())
+	assert.NoError(t, test.tty.Start())
+
+	done := test.startWaiting()
+	assertStillWaiting(t, done)
+	test.feed("\x1b[?997;1n")
+	assertDoneWaiting(t, done)
 }

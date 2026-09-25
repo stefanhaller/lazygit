@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gdamore/tcell/v3"
 	"github.com/lucasb-eyer/go-colorful"
@@ -98,6 +99,10 @@ type colorSchemeTty struct {
 	backgroundRequested bool
 	// The color scheme that the terminal last reported for itself
 	reported ColorScheme
+	// Whether we have asked for a color scheme report and are waiting for it
+	colorSchemeRequested bool
+	// Closed once no answer that waitForReplies waits for is outstanding
+	repliesArrived chan struct{}
 
 	notified DetectedColorScheme
 	onChange func(DetectedColorScheme)
@@ -166,8 +171,39 @@ func (self *colorSchemeTty) Start() error {
 	if strings.Contains(self.queries, requestBackgroundColor) {
 		self.backgroundRequested = true
 	}
+	if strings.Contains(self.queries, requestColorScheme) {
+		self.colorSchemeRequested = true
+	}
 
 	return nil
+}
+
+// waitForReplies waits until the terminal has answered what we asked it, but
+// no longer than the timeout. Call it before handing the terminal to another
+// program, or the answers would reach that program as if they were typed. It
+// only waits for the answers that the terminal has given before, so a terminal
+// that doesn't answer at all costs no time.
+func (self *colorSchemeTty) waitForReplies(timeout time.Duration) {
+	self.mutex.Lock()
+	if !self.awaitingRepliesLocked() {
+		self.mutex.Unlock()
+		return
+	}
+	if self.repliesArrived == nil {
+		self.repliesArrived = make(chan struct{})
+	}
+	repliesArrived := self.repliesArrived
+	self.mutex.Unlock()
+
+	select {
+	case <-repliesArrived:
+	case <-time.After(timeout):
+	}
+}
+
+func (self *colorSchemeTty) awaitingRepliesLocked() bool {
+	return (self.backgroundRequested && self.haveBackground) ||
+		(self.colorSchemeRequested && self.reported != ColorSchemeUnknown)
 }
 
 func (self *colorSchemeTty) Stop() error {
@@ -220,7 +256,13 @@ func (self *colorSchemeTty) handleReply(reply terminalReply) {
 		self.backgroundRequested = false
 	} else {
 		self.reported = reply.colorScheme
+		self.colorSchemeRequested = false
 		self.requestBackgroundColorLocked()
+	}
+
+	if self.repliesArrived != nil && !self.awaitingRepliesLocked() {
+		close(self.repliesArrived)
+		self.repliesArrived = nil
 	}
 
 	detected := self.detected()
