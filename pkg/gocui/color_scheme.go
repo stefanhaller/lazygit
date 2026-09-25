@@ -155,6 +155,7 @@ func (self *colorSchemeTty) subscribe(onChange func(DetectedColorScheme)) Detect
 
 	self.onChange = onChange
 	self.notified = self.detected()
+	trace("subscribed; detected so far: %s", self.notified)
 	return self.notified
 }
 
@@ -167,6 +168,7 @@ func (self *colorSchemeTty) Start() error {
 	defer self.mutex.Unlock()
 
 	self.started = true
+	trace("start; sending %q", self.queries)
 	self.writeLocked(self.queries)
 	if strings.Contains(self.queries, requestBackgroundColor) {
 		self.backgroundRequested = true
@@ -207,6 +209,7 @@ func (self *colorSchemeTty) awaitingRepliesLocked() bool {
 }
 
 func (self *colorSchemeTty) Stop() error {
+	trace("stop")
 	self.mutex.Lock()
 	// Otherwise, the program we hand the terminal to would receive the reports
 	// as if they were typed
@@ -223,11 +226,13 @@ func (self *colorSchemeTty) Write(p []byte) (int, error) {
 	self.mutex.Lock()
 	defer self.mutex.Unlock()
 
+	trace("write %s", traceBytes(p))
 	return self.Tty.Write(p)
 }
 
 func (self *colorSchemeTty) Read(p []byte) (int, error) {
 	n, err := self.Tty.Read(p)
+	trace("read %s (err %v)", traceBytes(p[:n]), err)
 
 	for _, reply := range self.scanner.scan(p[:n]) {
 		self.handleReply(reply)
@@ -266,6 +271,7 @@ func (self *colorSchemeTty) handleReply(reply terminalReply) {
 	}
 
 	detected := self.detected()
+	trace("reply %+v; detected: %s", reply, detected)
 	onChange := self.onChange
 	changed := detected != self.notified
 	if changed {
@@ -286,6 +292,7 @@ func (self *colorSchemeTty) requestBackgroundColorLocked() {
 		return
 	}
 
+	trace("asking for the background again")
 	self.writeLocked(requestBackgroundColor)
 	self.backgroundRequested = true
 }
